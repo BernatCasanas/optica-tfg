@@ -43,8 +43,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '835584545819',
     projectId: 'optica-tfg',
     authDomain: 'optica-tfg.firebaseapp.com',
-    databaseURL:
-        'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL: 'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'optica-tfg.appspot.com',
     measurementId: 'G-DDTNM5QJ1M',
   );
@@ -54,21 +53,18 @@ class DefaultFirebaseOptions {
     appId: '1:835584545819:android:4ff1a34c371eb99b25d4be',
     messagingSenderId: '835584545819',
     projectId: 'optica-tfg',
-    databaseURL:
-        'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL: 'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'optica-tfg.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAIPhbNHaUsp3p8Xvwity_cjLJ-gM28Cbk',
-    appId: '1:835584545819:ios:cd4c03d0464003d425d4be',
+    appId: '1:835584545819:ios:3a480db469b18a7525d4be',
     messagingSenderId: '835584545819',
     projectId: 'optica-tfg',
-    databaseURL:
-        'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL: 'https://optica-tfg-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'optica-tfg.appspot.com',
-    iosClientId:
-        '835584545819-507m91c67hmf19tnmn3qfo61cgk486ci.apps.googleusercontent.com',
-    iosBundleId: 'comdd',
+    iosClientId: '835584545819-g1me6glgs83m4vhfc97ba7fqi57j6deq.apps.googleusercontent.com',
+    iosBundleId: 'com.example.app',
   );
 }
