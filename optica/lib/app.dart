@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/configuration_1.dart';
 
 class App extends StatelessWidget {
   const App({Key key}) : super(key: key);
@@ -19,10 +20,7 @@ class App extends StatelessWidget {
                 ),
                 Expanded(
                   flex: 2,
-                  child: Text(
-                    "NomApp",
-                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-                  ),
+                  child: BigText(text: "NomApp"),
                 ),
                 Expanded(
                   flex: 2,
@@ -55,6 +53,40 @@ class App extends StatelessWidget {
   }
 }
 
+class BigText extends StatelessWidget {
+  final text;
+
+  const BigText({
+    Key key,
+    this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
+class SmallText extends StatelessWidget {
+  final text;
+
+  const SmallText({
+    Key key,
+    this.text,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    );
+  }
+}
+
 class _Button extends StatelessWidget {
   final name;
   const _Button({
@@ -65,11 +97,16 @@ class _Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const Configuration_1()),
+        );
+      },
       child: Text(name),
       style: ElevatedButton.styleFrom(
-          minimumSize: Size(200, 50),
-          shape: StadiumBorder(),
+          minimumSize: const Size(200, 50),
+          shape: const StadiumBorder(),
           primary: Colors.grey),
     );
   }
@@ -94,7 +131,7 @@ class _InputBox extends StatelessWidget {
           Text(name),
           Container(
             height: 35,
-            child: TextField(
+            child: const TextField(
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
