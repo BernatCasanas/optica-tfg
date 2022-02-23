@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:optica/app.dart';
 import 'package:intl/intl.dart';
 
+import 'configuration_2.dart';
+
 class Configuration_1 extends StatefulWidget {
   const Configuration_1({Key key}) : super(key: key);
 
@@ -19,6 +21,7 @@ class _Configuration_1State extends State<Configuration_1> {
         resizeToAvoidBottomInset: false,
         body: Center(
           child: Column(children: [
+            //Total flex = 12
             Expanded(
               flex: 1,
               child: Container(),
@@ -121,16 +124,11 @@ class _Configuration_1State extends State<Configuration_1> {
                     primary: Colors.grey,
                     onPrimary: Colors.black),
                 onPressed: () {
-                  showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2022),
-                          lastDate: DateTime(2030))
-                      .then((date) {
-                    setState(() {
-                      _dateTime = date;
-                    });
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Configuration_2()),
+                  );
                 },
               ),
             ),
