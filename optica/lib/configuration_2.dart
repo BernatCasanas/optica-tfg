@@ -50,7 +50,7 @@ class _Configuration_2State extends State<Configuration_2> {
               Expanded(
                 child: Container(),
               ),
-              Expanded(
+              const Expanded(
                 child: BigText(text: "Configuració"),
               ),
               Expanded(
@@ -61,9 +61,9 @@ class _Configuration_2State extends State<Configuration_2> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _LentInfo(),
+                        _LentInfo(numColumn: 1),
                         SizedBox(width: 40),
-                        _LentInfo(),
+                        _LentInfo(numColumn: 2),
                       ],
                     ),
                     SizedBox(height: 15),
@@ -89,7 +89,7 @@ class _Configuration_2State extends State<Configuration_2> {
                         });
                       },
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     TextButton(
                       child: Text("Guardar", style: TextStyle(fontSize: 10)),
                       style: ElevatedButton.styleFrom(
@@ -105,7 +105,8 @@ class _Configuration_2State extends State<Configuration_2> {
               Expanded(
                 flex: 0,
                 child: TextButton(
-                  child: Text("Historial", style: TextStyle(fontSize: 20)),
+                  child:
+                      const Text("Historial", style: TextStyle(fontSize: 20)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(300, 40),
                       shape: const StadiumBorder(),
@@ -129,15 +130,18 @@ class _Configuration_2State extends State<Configuration_2> {
                                 if (snapshot.hasError) {
                                   return const CircularProgressIndicator();
                                 } else if (snapshot.hasData) {
-                                  return const Text("Hi ha data!"); //error
-                                  // return ListView(
-                                  //     children: snapshot.data.docs.map((e) {
-                                  //   return Card(
-                                  //     child: ListTile(
-                                  //       title: Text(e['tipo']),
-                                  //     ),
-                                  //   );
-                                  // }).toList());
+                                  return Container(
+                                    height: 100,
+                                    width: 100,
+                                    child: ListView(
+                                        children: snapshot.data.docs.map((e) {
+                                      return Card(
+                                        child: ListTile(
+                                          title: Text(e['tipo'].toString()),
+                                        ),
+                                      );
+                                    }).toList()),
+                                  );
                                 } else {
                                   return Container();
                                 }
@@ -159,7 +163,8 @@ class _Configuration_2State extends State<Configuration_2> {
               Expanded(
                 flex: 0,
                 child: TextButton(
-                  child: Text("Continuar", style: TextStyle(fontSize: 10)),
+                  child:
+                      const Text("Continuar", style: TextStyle(fontSize: 10)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       shape: const StadiumBorder(),
@@ -183,71 +188,75 @@ class _Configuration_2State extends State<Configuration_2> {
 }
 
 class _LentInfo extends StatelessWidget {
-  final numRow;
-  const _LentInfo({Key key, this.numRow}) : super(key: key);
+  final numColumn;
+  const _LentInfo({Key key, this.numColumn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var add = numColumn + 4;
     return Column(
       children: [
         Container(
           child: const Icon(Icons.remove_red_eye_outlined, size: 80),
         ),
-        const SizedBox(
+        SizedBox(
           width: 120,
           height: 65,
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: TextField(
-              controller: controllers[1], //error
+              controller: controllers.elementAt(1 + add),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-              decoration: InputDecoration(
+              style: const TextStyle(fontSize: 14),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "dubte",
               ),
             ),
           ),
         ),
-        const SizedBox(
+        SizedBox(
           width: 120,
           height: 65,
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: TextField(
+              controller: controllers.elementAt(1 + add),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-              decoration: InputDecoration(
+              style: const TextStyle(fontSize: 14),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "dubte",
               ),
             ),
           ),
         ),
-        const SizedBox(
+        SizedBox(
           width: 120,
           height: 65,
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: TextField(
+              controller: controllers.elementAt(1 + add),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-              decoration: InputDecoration(
+              style: const TextStyle(fontSize: 14),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "dubte",
               ),
             ),
           ),
         ),
-        const SizedBox(
+        SizedBox(
           width: 120,
           height: 65,
           child: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: TextField(
+              controller: controllers.elementAt(1 + add),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-              decoration: InputDecoration(
+              style: const TextStyle(fontSize: 14),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "dubte",
               ),
