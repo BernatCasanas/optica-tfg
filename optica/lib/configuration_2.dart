@@ -97,7 +97,28 @@ class _Configuration_2State extends State<Configuration_2> {
                           shape: const StadiumBorder(),
                           primary: Colors.grey,
                           onPrimary: Colors.black),
-                      onPressed: () {},
+                      onPressed: () {
+                        List<int> graduation = [
+                          int.parse(controller1_1.text),
+                          int.parse(controller1_2.text),
+                          int.parse(controller1_3.text),
+                          int.parse(controller1_4.text),
+                          int.parse(controller2_1.text),
+                          int.parse(controller2_2.text),
+                          int.parse(controller2_3.text),
+                          int.parse(controller2_4.text),
+                        ];
+                        db
+                            .collection("usuarios")
+                            .doc(FirebaseAuth.instance.currentUser.email
+                                .toString())
+                            .collection("historial")
+                            .add({
+                          'fecha': DateTime.now(),
+                          'tipo': '2',
+                          'graduación': graduation
+                        });
+                      },
                     ),
                   ],
                 )),
@@ -193,7 +214,7 @@ class _LentInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var add = numColumn + 4;
+    var add = numColumn == 1 ? 0 : 3;
     return Column(
       children: [
         Container(
@@ -205,7 +226,7 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
-              controller: controllers.elementAt(1 + add),
+              controller: controllers.elementAt(0 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
@@ -237,7 +258,7 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
-              controller: controllers.elementAt(1 + add),
+              controller: controllers.elementAt(2 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
@@ -253,7 +274,7 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
-              controller: controllers.elementAt(1 + add),
+              controller: controllers.elementAt(3 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
