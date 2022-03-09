@@ -114,7 +114,7 @@ class _Configuration_2State extends State<Configuration_2> {
                                 .toString())
                             .collection("historial")
                             .add({
-                          'fecha': DateTime.now(),
+                          'fecha': _dateTime,
                           'tipo': '2',
                           'graduación': graduation
                         });
