@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Principal extends StatefulWidget {
-  const Principal({Key key}) : super(key: key);
+  const Principal({Key? key}) : super(key: key);
 
   @override
   _PrincipalState createState() => _PrincipalState();

@@ -1,13 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/configuration_1.dart';
 
 class App extends StatelessWidget {
-  const App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return MaterialApp(
       home: Scaffold(
         body: SafeArea(
@@ -18,14 +16,14 @@ class App extends StatelessWidget {
                   flex: 2,
                   child: Container(),
                 ),
-                Expanded(
+                const Expanded(
                   flex: 2,
                   child: BigText(text: "NomApp"),
                 ),
                 Expanded(
                   flex: 2,
                   child: Column(
-                    children: [
+                    children: const [
                       _InputBox(name: "Nom"),
                       SizedBox(height: 12),
                       _InputBox(name: "Codi Deontologic"),
@@ -36,7 +34,7 @@ class App extends StatelessWidget {
                   flex: 1,
                   child: Container(),
                 ),
-                Expanded(
+                const Expanded(
                   flex: 0,
                   child: _Button(name: "Accedeix"),
                 ),
@@ -54,44 +52,44 @@ class App extends StatelessWidget {
 }
 
 class BigText extends StatelessWidget {
-  final text;
+  final String text;
 
   const BigText({
-    Key key,
-    this.text,
+    Key? key,
+    required this.text,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
     );
   }
 }
 
 class SmallText extends StatelessWidget {
-  final text;
+  final String text;
 
   const SmallText({
-    Key key,
-    this.text,
+    Key? key,
+    required this.text,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
     );
   }
 }
 
 class _Button extends StatelessWidget {
-  final name;
+  final String name;
   const _Button({
-    Key key,
-    this.name,
+    Key? key,
+    required this.name,
   }) : super(key: key);
 
   @override
@@ -100,23 +98,21 @@ class _Button extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const Configuration_1()),
+          MaterialPageRoute(builder: (context) => const Configuration1()),
         );
       },
       child: Text(name),
       style: ElevatedButton.styleFrom(
-          minimumSize: const Size(200, 50),
-          shape: const StadiumBorder(),
-          primary: Colors.grey),
+          minimumSize: const Size(200, 50), shape: const StadiumBorder(), primary: Colors.grey),
     );
   }
 }
 
 class _InputBox extends StatelessWidget {
-  final name;
+  final String name;
   const _InputBox({
-    Key key,
-    this.name,
+    Key? key,
+    required this.name,
   }) : super(key: key);
 
   @override
@@ -129,9 +125,9 @@ class _InputBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(name),
-          Container(
+          const SizedBox(
             height: 35,
-            child: const TextField(
+            child: TextField(
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,

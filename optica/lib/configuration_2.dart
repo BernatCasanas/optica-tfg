@@ -1,17 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:optica/configuration_1.dart';
 import 'package:intl/intl.dart';
-import 'package:optica/principalApp.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:optica/principal_app.dart';
 
 import 'app.dart';
 
-class Configuration_2 extends StatefulWidget {
-  const Configuration_2({Key key}) : super(key: key);
+class Configuration2 extends StatefulWidget {
+  const Configuration2({Key? key}) : super(key: key);
 
   @override
-  State<Configuration_2> createState() => _Configuration_2State();
+  State<Configuration2> createState() => _Configuration2State();
 }
 
 final controller1_1 = TextEditingController();
@@ -34,9 +33,10 @@ List<TextEditingController> controllers = [
   controller2_4
 ];
 
-class _Configuration_2State extends State<Configuration_2> {
-  DateTime _dateTime;
+class _Configuration2State extends State<Configuration2> {
+  DateTime? _dateTime;
   FirebaseFirestore db = FirebaseFirestore.instance;
+  final currentUser = FirebaseAuth.instance.currentUser!;
 
   @override
   Widget build(BuildContext context) {
@@ -55,22 +55,21 @@ class _Configuration_2State extends State<Configuration_2> {
               ),
               Expanded(
                 flex: 7,
-                child: Container(
-                    child: Column(
+                child: Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const [
                         _LentInfo(numColumn: 1),
                         SizedBox(width: 40),
                         _LentInfo(numColumn: 2),
                       ],
                     ),
-                    SizedBox(height: 15),
+                    const SizedBox(height: 15),
                     TextButton(
                       child: Text(_dateTime == null
                           ? "Tria una data"
-                          : DateFormat("yyyy-MM-dd").format(_dateTime)),
+                          : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(150, 40),
                           shape: const StadiumBorder(),
@@ -91,7 +90,7 @@ class _Configuration_2State extends State<Configuration_2> {
                     ),
                     const SizedBox(height: 15),
                     TextButton(
-                      child: Text("Guardar", style: TextStyle(fontSize: 10)),
+                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -110,24 +109,18 @@ class _Configuration_2State extends State<Configuration_2> {
                         ];
                         db
                             .collection("usuarios")
-                            .doc(FirebaseAuth.instance.currentUser.email
-                                .toString())
+                            .doc(currentUser.email.toString())
                             .collection("historial")
-                            .add({
-                          'fecha': _dateTime,
-                          'tipo': '2',
-                          'graduación': graduation
-                        });
+                            .add({'fecha': _dateTime, 'tipo': '2', 'graduación': graduation});
                       },
                     ),
                   ],
-                )),
+                ),
               ),
               Expanded(
                 flex: 0,
                 child: TextButton(
-                  child:
-                      const Text("Historial", style: TextStyle(fontSize: 20)),
+                  child: const Text("Historial", style: TextStyle(fontSize: 20)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(300, 40),
                       shape: const StadiumBorder(),
@@ -142,20 +135,19 @@ class _Configuration_2State extends State<Configuration_2> {
                             content: StreamBuilder(
                               stream: db
                                   .collection("usuarios")
-                                  .doc(FirebaseAuth.instance.currentUser.email
-                                      .toString())
+                                  .doc(FirebaseAuth.instance.currentUser!.email.toString())
                                   .collection("historial")
                                   .snapshots(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                              builder:
+                                  (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                                 if (snapshot.hasError) {
                                   return const CircularProgressIndicator();
                                 } else if (snapshot.hasData) {
-                                  return Container(
+                                  return SizedBox(
                                     height: 100,
                                     width: 100,
                                     child: ListView(
-                                        children: snapshot.data.docs.map((e) {
+                                        children: snapshot.data!.docs.map((e) {
                                       return Card(
                                         child: ListTile(
                                           title: Text(e['tipo'].toString()),
@@ -184,8 +176,7 @@ class _Configuration_2State extends State<Configuration_2> {
               Expanded(
                 flex: 0,
                 child: TextButton(
-                  child:
-                      const Text("Continuar", style: TextStyle(fontSize: 10)),
+                  child: const Text("Continuar", style: TextStyle(fontSize: 10)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       shape: const StadiumBorder(),
@@ -194,8 +185,7 @@ class _Configuration_2State extends State<Configuration_2> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const Principal()),
+                      MaterialPageRoute(builder: (context) => const Principal()),
                     );
                   },
                 ),
@@ -209,17 +199,15 @@ class _Configuration_2State extends State<Configuration_2> {
 }
 
 class _LentInfo extends StatelessWidget {
-  final numColumn;
-  const _LentInfo({Key key, this.numColumn}) : super(key: key);
+  final int numColumn;
+  const _LentInfo({Key? key, required this.numColumn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var add = numColumn == 1 ? 0 : 3;
     return Column(
       children: [
-        Container(
-          child: const Icon(Icons.remove_red_eye_outlined, size: 80),
-        ),
+        const Icon(Icons.remove_red_eye_outlined, size: 80),
         SizedBox(
           width: 120,
           height: 65,

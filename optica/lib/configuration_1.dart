@@ -4,15 +4,15 @@ import 'package:intl/intl.dart';
 
 import 'configuration_2.dart';
 
-class Configuration_1 extends StatefulWidget {
-  const Configuration_1({Key key}) : super(key: key);
+class Configuration1 extends StatefulWidget {
+  const Configuration1({Key? key}) : super(key: key);
 
   @override
-  State<Configuration_1> createState() => _Configuration_1State();
+  State<Configuration1> createState() => _Configuration1State();
 }
 
-class _Configuration_1State extends State<Configuration_1> {
-  DateTime _dateTime;
+class _Configuration1State extends State<Configuration1> {
+  DateTime? _dateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _Configuration_1State extends State<Configuration_1> {
               flex: 1,
               child: Container(),
             ),
-            Expanded(
+            const Expanded(
               child: BigText(text: "Configuració"),
             ),
             Expanded(
@@ -38,13 +38,13 @@ class _Configuration_1State extends State<Configuration_1> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SmallText(text: "Lents"),
+                  const SmallText(text: "Lents"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MainInput(),
+                    children: const [
+                      MainInput(text: "A"),
                       SizedBox(width: 30),
-                      MainInput(),
+                      MainInput(text: "B"),
                     ],
                   ),
                 ],
@@ -55,13 +55,13 @@ class _Configuration_1State extends State<Configuration_1> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SmallText(text: "Estoig"),
+                  const SmallText(text: "Estoig"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MainInput(),
+                    children: const [
+                      MainInput(text: "C"),
                       SizedBox(width: 30),
-                      MainInput(),
+                      MainInput(text: "D"),
                     ],
                   )
                 ],
@@ -72,13 +72,13 @@ class _Configuration_1State extends State<Configuration_1> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SmallText(text: "Solució"),
+                  const SmallText(text: "Solució"),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MainInput(),
+                    children: const [
+                      MainInput(text: "E"),
                       SizedBox(width: 30),
-                      MainInput(),
+                      MainInput(text: "F"),
                     ],
                   )
                 ],
@@ -86,38 +86,36 @@ class _Configuration_1State extends State<Configuration_1> {
             ),
             Expanded(
               flex: 3,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SmallText(text: "Revisió"),
-                    TextButton(
-                      child: Text(_dateTime == null
-                          ? "Tria una data"
-                          : DateFormat("yyyy-MM-dd").format(_dateTime)),
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(150, 40),
-                          shape: const StadiumBorder(),
-                          primary: Colors.grey,
-                          onPrimary: Colors.black),
-                      onPressed: () {
-                        showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2022),
-                                lastDate: DateTime(2030))
-                            .then((date) {
-                          setState(() {
-                            _dateTime = date;
-                          });
-                        });
-                      },
-                    )
-                  ]),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const SmallText(text: "Revisió"),
+                TextButton(
+                  child: Text(_dateTime == null
+                      ? "Tria una data"
+                      : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 40),
+                      shape: const StadiumBorder(),
+                      primary: Colors.grey,
+                      onPrimary: Colors.black),
+                  onPressed: () {
+                    showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2022),
+                            lastDate: DateTime(2030))
+                        .then((date) {
+                      setState(() {
+                        _dateTime = date;
+                      });
+                    });
+                  },
+                )
+              ]),
             ),
             Expanded(
               flex: 0,
               child: TextButton(
-                child: Text("Continuar", style: TextStyle(fontSize: 10)),
+                child: const Text("Continuar", style: TextStyle(fontSize: 10)),
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(100, 40),
                     shape: const StadiumBorder(),
@@ -126,8 +124,7 @@ class _Configuration_1State extends State<Configuration_1> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const Configuration_2()),
+                    MaterialPageRoute(builder: (context) => const Configuration2()),
                   );
                 },
               ),
@@ -141,22 +138,25 @@ class _Configuration_1State extends State<Configuration_1> {
 }
 
 class MainInput extends StatelessWidget {
-  final text;
-  const MainInput({Key key, this.text}) : super(key: key);
+  final String text;
+  const MainInput({
+    Key? key,
+    required this.text,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox(
+    return SizedBox(
       width: 120,
       height: 65,
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: TextField(
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
-            hintText: "dubte",
+            border: const OutlineInputBorder(),
+            hintText: text,
           ),
         ),
       ),
