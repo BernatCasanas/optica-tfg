@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 final pages = <Widget>[
   const Alertes(),
@@ -133,7 +134,7 @@ class Alertes extends StatelessWidget {
                           children: snapshot.data!.docs.map<Widget>((e) {
                             return Column(
                               children: [
-                                SizedBox(height: 10),
+                                const SizedBox(height: 10),
                                 Container(
                                   width: 350,
                                   decoration: BoxDecoration(
@@ -178,12 +179,66 @@ class Alertes extends StatelessWidget {
   }
 }
 
-class Progres extends StatelessWidget {
+class Progres extends StatefulWidget {
   const Progres({Key? key}) : super(key: key);
 
   @override
+  State<Progres> createState() => _ProgresState();
+}
+
+class _ProgresState extends State<Progres> {
+  DateTime _selectedDay = DateTime.now();
+  DateTime _focusedDay = DateTime.now();
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  @override
   Widget build(BuildContext context) {
-    return const Text("Search");
+    return Column(
+      children: [
+        Expanded(
+          flex: 0,
+          child: TableCalendar(
+            firstDay: DateTime.utc(2022, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            focusedDay: DateTime.now(),
+            selectedDayPredicate: (day) {
+              return isSameDay(_selectedDay, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay; // update `_focusedDay` here as well
+              });
+            },
+            calendarFormat: _calendarFormat,
+            onFormatChanged: (format) {
+              setState(() {
+                _calendarFormat = format;
+              });
+            },
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            color: Colors.grey,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: const [
+                  Text(
+                    "Titulo",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Descripción"),
+                ],
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }
 
@@ -192,7 +247,28 @@ class Ofertes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Search");
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        Center(
+          child: Container(
+            height: 120,
+            width: 300,
+            decoration: const BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.all(Radius.circular(35))),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text("data"),
+                SizedBox(height: 20),
+                Text("data"),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
