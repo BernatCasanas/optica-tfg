@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -267,7 +269,101 @@ class Ofertes extends StatelessWidget {
             ),
           ),
         ),
+        StreamBuilder(
+          stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData) {
+              List<DocumentSnapshot> offers = snapshot.data!.docs;
+              return Column(
+                children: [
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: GridView.builder(
+                      itemCount: offers.length,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        final expire = offers[index]['fecha_caduca'];
+                        final now = DateTime.now();
+                        final difference = now.difference(expire).inDays;
+                        if (difference < 0) {
+                          return _BoxOffer(
+                              days: difference,
+                              price: offers[index]['precio'],
+                              title: offers[index]['nombre'],
+                              description: offers[index]['descripción']);
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        ),
       ],
+    );
+  }
+}
+
+class _BoxOffer extends StatelessWidget {
+  final int days;
+  final double price;
+  final String title;
+  final String description;
+
+  const _BoxOffer({
+    Key? key,
+    required this.days,
+    required this.price,
+    required this.title,
+    required this.description,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(35))),
+      height: 150,
+      width: 150,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: const [
+              Text("2d"),
+              SizedBox(),
+              Text("13,99€"),
+            ],
+          ),
+          const Icon(Icons.photo),
+          Column(
+            children: const [
+              Text(
+                "data",
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 2),
+              Text("data lorem impum")
+            ],
+            mainAxisAlignment: MainAxisAlignment.center,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -277,6 +373,76 @@ class Editar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Search");
+    List<String> texts = {
+      "Obrir Blister",
+      "Obrir Solució",
+      "Canviar Estoig",
+      "Canviar Graduació"
+    }.toList();
+
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        SizedBox(
+          width: 300,
+          height: 300,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+            ),
+            itemCount: 4,
+            itemBuilder: (BuildContext ctx, index) {
+              return TextButton(
+                onPressed: () {},
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    texts[index],
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  color: Colors.grey,
+                ),
+              );
+            },
+          ),
+        ),
+        TextButton(
+          child: const Text(
+            "Historial",
+          ),
+          style: ElevatedButton.styleFrom(
+              minimumSize: const Size(100, 40),
+              shape: const StadiumBorder(),
+              primary: Colors.grey,
+              onPrimary: Colors.black),
+          onPressed: () {},
+        ),
+        const SizedBox(height: 10),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Container(
+              color: Colors.grey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: const [
+                    Text(
+                      "Situació actual del temps",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 4),
+                    Text("data"),
+                    Text("data"),
+                    Text("data"),
+                    Text("data"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
   }
 }
