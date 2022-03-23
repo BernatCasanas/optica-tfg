@@ -90,7 +90,8 @@ class _Configuration2State extends State<Configuration2> {
                     ),
                     const SizedBox(height: 15),
                     TextButton(
-                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                      child:
+                          const Text("Guardar", style: TextStyle(fontSize: 10)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -111,85 +112,99 @@ class _Configuration2State extends State<Configuration2> {
                             .collection("usuarios")
                             .doc(currentUser.email.toString())
                             .collection("historial")
-                            .add({'fecha': _dateTime, 'tipo': '2', 'graduación': graduation});
+                            .add({
+                          'fecha': _dateTime,
+                          'tipo': '2',
+                          'graduación': graduation
+                        });
                       },
                     ),
                   ],
                 ),
               ),
               Expanded(
-                flex: 0,
-                child: TextButton(
-                  child: const Text("Historial", style: TextStyle(fontSize: 20)),
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(300, 40),
-                      shape: const StadiumBorder(),
-                      primary: Colors.grey,
-                      onPrimary: Colors.black),
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Historial'),
-                            content: StreamBuilder(
-                              stream: db
-                                  .collection("usuarios")
-                                  .doc(FirebaseAuth.instance.currentUser!.email.toString())
-                                  .collection("historial")
-                                  .snapshots(),
-                              builder:
-                                  (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                                if (snapshot.hasError) {
-                                  return const CircularProgressIndicator();
-                                } else if (snapshot.hasData) {
-                                  return SizedBox(
-                                    height: 100,
-                                    width: 100,
-                                    child: ListView(
-                                        children: snapshot.data!.docs.map((e) {
-                                      return Card(
-                                        child: ListTile(
-                                          title: Text(e['tipo'].toString()),
-                                        ),
-                                      );
-                                    }).toList()),
-                                  );
-                                } else {
-                                  return Container();
-                                }
-                              },
-                            ),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Tanca'),
-                              ),
-                            ],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TextButton(
+                        child: const Text("Historial",
+                            style: TextStyle(fontSize: 20)),
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(100, 40),
+                            shape: const StadiumBorder(),
+                            primary: Colors.grey,
+                            onPrimary: Colors.black),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Historial'),
+                                  content: StreamBuilder(
+                                    stream: db
+                                        .collection("usuarios")
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.email
+                                            .toString())
+                                        .collection("historial")
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (snapshot.hasError) {
+                                        return const CircularProgressIndicator();
+                                      } else if (snapshot.hasData) {
+                                        return SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: ListView(
+                                              children:
+                                                  snapshot.data!.docs.map((e) {
+                                            return Card(
+                                              child: ListTile(
+                                                title:
+                                                    Text(e['tipo'].toString()),
+                                              ),
+                                            );
+                                          }).toList()),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    },
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text('Tanca'),
+                                    ),
+                                  ],
+                                );
+                              });
+                        },
+                      ),
+                      TextButton(
+                        child: const Text(
+                          "Continuar",
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(100, 40),
+                            shape: const StadiumBorder(),
+                            primary: Colors.grey,
+                            onPrimary: Colors.black),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Principal()),
                           );
-                        });
-                  },
-                ),
-              ),
-              Expanded(
-                flex: 0,
-                child: TextButton(
-                  child: const Text("Continuar", style: TextStyle(fontSize: 10)),
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(100, 40),
-                      shape: const StadiumBorder(),
-                      primary: Colors.grey,
-                      onPrimary: Colors.black),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Principal()),
-                    );
-                  },
-                ),
-              ),
+                        },
+                      ),
+                    ],
+                  ),
+                  flex: 0),
+              SizedBox(height: 10),
             ],
           ),
         ),
