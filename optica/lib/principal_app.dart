@@ -278,7 +278,9 @@ class Ofertes extends StatelessWidget {
               return Column(
                 children: [
                   const SizedBox(height: 10),
-                  Expanded(
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height - 334,
+                    width: 340,
                     child: GridView.builder(
                       itemCount: offers.length,
                       gridDelegate:
@@ -290,13 +292,14 @@ class Ofertes extends StatelessWidget {
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
-                        final expire = offers[index]['fecha_caduca'];
+                        final expire = offers[index]['fecha_caduca'].toDate();
                         final now = DateTime.now();
                         final difference = now.difference(expire).inDays;
-                        if (difference < 0) {
+                        if (difference > 0) {
                           return _BoxOffer(
+                              //hi ha algo que no em deix. si trec la condició em deix imprimirho
                               days: difference,
-                              price: offers[index]['precio'],
+                              price: double.parse(offers[index]['precio']),
                               title: offers[index]['nombre'],
                               description: offers[index]['descripción']);
                         } else {
@@ -337,8 +340,8 @@ class _BoxOffer extends StatelessWidget {
       decoration: const BoxDecoration(
           color: Colors.grey,
           borderRadius: BorderRadius.all(Radius.circular(35))),
-      height: 150,
-      width: 150,
+      height: 50,
+      width: 50,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
