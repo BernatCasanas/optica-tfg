@@ -204,7 +204,7 @@ class _Configuration2State extends State<Configuration2> {
                     ],
                   ),
                   flex: 0),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -229,12 +229,13 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
+              keyboardType: TextInputType.number,
               controller: controllers.elementAt(0 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "dubte",
+                hintText: "X",
               ),
             ),
           ),
@@ -245,12 +246,13 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
+              keyboardType: TextInputType.number,
               controller: controllers.elementAt(1 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "dubte",
+                hintText: "Y",
               ),
             ),
           ),
@@ -261,12 +263,13 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
+              keyboardType: TextInputType.number,
               controller: controllers.elementAt(2 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "dubte",
+                hintText: "Z",
               ),
             ),
           ),
@@ -277,12 +280,13 @@ class _LentInfo extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(10),
             child: TextField(
+              keyboardType: TextInputType.number,
               controller: controllers.elementAt(3 + add),
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 14),
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "dubte",
+                hintText: "S",
               ),
             ),
           ),

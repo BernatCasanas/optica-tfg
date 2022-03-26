@@ -42,9 +42,9 @@ class _Configuration1State extends State<Configuration1> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      MainInput(text: "A"),
+                      MainInput(text: "Vida útil"),
                       SizedBox(width: 30),
-                      MainInput(text: "B"),
+                      MainInput(text: "Avís"),
                     ],
                   ),
                 ],
@@ -59,9 +59,9 @@ class _Configuration1State extends State<Configuration1> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      MainInput(text: "C"),
+                      MainInput(text: "Vida útil"),
                       SizedBox(width: 30),
-                      MainInput(text: "D"),
+                      MainInput(text: "Avís"),
                     ],
                   )
                 ],
@@ -76,9 +76,9 @@ class _Configuration1State extends State<Configuration1> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      MainInput(text: "E"),
+                      MainInput(text: "Vida útil"),
                       SizedBox(width: 30),
-                      MainInput(text: "F"),
+                      MainInput(text: "Avís"),
                     ],
                   )
                 ],
@@ -86,31 +86,33 @@ class _Configuration1State extends State<Configuration1> {
             ),
             Expanded(
               flex: 3,
-              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const SmallText(text: "Revisió"),
-                TextButton(
-                  child: Text(_dateTime == null
-                      ? "Tria una data"
-                      : DateFormat("yyyy-MM-dd").format(_dateTime!)),
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(150, 40),
-                      shape: const StadiumBorder(),
-                      primary: Colors.grey,
-                      onPrimary: Colors.black),
-                  onPressed: () {
-                    showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2022),
-                            lastDate: DateTime(2030))
-                        .then((date) {
-                      setState(() {
-                        _dateTime = date;
-                      });
-                    });
-                  },
-                )
-              ]),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SmallText(text: "Revisió"),
+                    TextButton(
+                      child: Text(_dateTime == null
+                          ? "Tria una data"
+                          : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(150, 40),
+                          shape: const StadiumBorder(),
+                          primary: Colors.grey,
+                          onPrimary: Colors.black),
+                      onPressed: () {
+                        showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2022),
+                                lastDate: DateTime(2030))
+                            .then((date) {
+                          setState(() {
+                            _dateTime = date;
+                          });
+                        });
+                      },
+                    )
+                  ]),
             ),
             Expanded(
               flex: 0,
@@ -124,7 +126,8 @@ class _Configuration1State extends State<Configuration1> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Configuration2()),
+                    MaterialPageRoute(
+                        builder: (context) => const Configuration2()),
                   );
                 },
               ),
@@ -152,6 +155,7 @@ class MainInput extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: TextField(
+          keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
