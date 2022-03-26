@@ -13,14 +13,27 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ds = FirebaseFirestore.instance
-        .collection("usuarios")
-        .doc(currentUser?.email.toString())
-        .get();
-    return ds.then((value) => value['codigo']) == ""
-        ? _FirstConnection()
-        : Principal();
+    return GetFirstConnection() == true
+        ? const _FirstConnection()
+        : const Principal();
   }
+}
+
+Future<bool> GetFirstConnection() async {
+  var doc = await FirebaseFirestore.instance
+      .collection("usuarios")
+      .doc(currentUser?.email.toString());
+  return doc.get().then(
+    (value) {
+      if (value.exists) {
+        if (value.data()?['codigo'] == "") {
+          return true;
+        }
+        return false;
+      }
+      return false;
+    },
+  );
 }
 
 class _FirstConnection extends StatelessWidget {
