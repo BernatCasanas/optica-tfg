@@ -15,7 +15,45 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _FirstConnection();
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance
+          .collection("usuarios")
+          .doc(currentUser?.email.toString())
+          .get(),
+      builder: (_, snapshot) {
+        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+
+        if (snapshot.hasData) {
+          var data = snapshot.data!.data();
+          var value = data!['codigo'];
+          if (value == "") {
+            return const _FirstConnection();
+          } else {
+            return const Principal();
+          }
+        }
+
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+    // return FutureBuilder<QuerySnapshot>(
+    //   future: FirebaseFirestore.instance
+    //       .collection("usuarios")
+    //       .get(),
+    //   builder: (context, snapshot) {
+    //     if (snapshot.hasData) {
+    //       final List<DocumentSnapshot> documents = snapshot.data!.docs;
+    //       documents.where((element) => element.data().toString()==currentUser?.email.toString())
+    //       if () {
+    //         return const _FirstConnection();
+    //       } else {
+    //         return const Principal();
+    //       }
+    //     } else {
+    //       return Container();
+    //     }
+    //   },
+    // );
   }
 }
 
