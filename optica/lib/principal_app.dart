@@ -41,10 +41,31 @@ class _PrincipalState extends State<Principal> {
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Align(
-                        child: Text(
-                          pages[indexPage].toString(),
-                          style: const TextStyle(
-                              fontSize: 25, fontWeight: FontWeight.bold),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              pages[indexPage].toString(),
+                              style: const TextStyle(
+                                  fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                FirebaseAuth.instance.signOut();
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                  color: Colors.grey,
+                                ),
+                                width: 40,
+                                height: 40,
+                                child: const Icon(Icons.logout,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
                         ),
                         alignment: Alignment.bottomLeft,
                       ),
