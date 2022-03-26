@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -220,6 +218,8 @@ class _ProgresState extends State<Progres> {
         Expanded(
           flex: 0,
           child: TableCalendar(
+            locale: "es_ES",
+            headerStyle: const HeaderStyle(formatButtonVisible: false),
             firstDay: DateTime.utc(2022, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: DateTime.now(),

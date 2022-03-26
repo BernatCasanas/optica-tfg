@@ -33,7 +33,7 @@ class App extends StatelessWidget {
           }
         }
 
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: const CircularProgressIndicator());
       },
     );
     // return FutureBuilder<QuerySnapshot>(
