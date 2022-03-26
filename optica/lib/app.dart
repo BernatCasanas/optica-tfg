@@ -8,14 +8,14 @@ final TextEditingController controller_nombre = TextEditingController();
 final TextEditingController controller_codigo = TextEditingController();
 final currentUser = FirebaseAuth.instance.currentUser;
 
+bool error = false;
+
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GetFirstConnection() == true
-        ? const _FirstConnection()
-        : const Principal();
+    return _FirstConnection();
   }
 }
 
@@ -36,11 +36,16 @@ Future<bool> GetFirstConnection() async {
   );
 }
 
-class _FirstConnection extends StatelessWidget {
+class _FirstConnection extends StatefulWidget {
   const _FirstConnection({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<_FirstConnection> createState() => _FirstConnectionState();
+}
+
+class _FirstConnectionState extends State<_FirstConnection> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -72,9 +77,17 @@ class _FirstConnection extends StatelessWidget {
                   flex: 1,
                   child: Container(),
                 ),
-                const Expanded(
+                Expanded(
                   flex: 0,
-                  child: _Button(name: "Accedeix"),
+                  child: Column(
+                    children: [
+                      const _Button(name: "Accedeix"),
+                      error == true
+                          ? const Text("Falta omplir dades",
+                              style: TextStyle(color: Colors.red))
+                          : Container(),
+                    ],
+                  ),
                 ),
                 Expanded(
                   flex: 1,
@@ -123,7 +136,7 @@ class SmallText extends StatelessWidget {
   }
 }
 
-class _Button extends StatelessWidget {
+class _Button extends StatefulWidget {
   final String name;
   const _Button({
     Key? key,
@@ -131,9 +144,25 @@ class _Button extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<_Button> createState() => _ButtonState();
+}
+
+class _ButtonState extends State<_Button> {
+  @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
+        setState(() {
+          if (controller_codigo.text == "" || controller_nombre.text == "") {
+            error = true;
+            return;
+          }
+          error = false;
+        });
+        if (error) {
+          return;
+        }
+
         FirebaseFirestore.instance
             .collection("usuarios")
             .doc(currentUser?.email.toString())
@@ -146,7 +175,7 @@ class _Button extends StatelessWidget {
           MaterialPageRoute(builder: (context) => const Configuration1()),
         );
       },
-      child: Text(name),
+      child: Text(widget.name),
       style: ElevatedButton.styleFrom(
           minimumSize: const Size(200, 50),
           shape: const StadiumBorder(),

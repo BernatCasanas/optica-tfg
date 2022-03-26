@@ -1,8 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/app.dart';
 import 'package:intl/intl.dart';
 
 import 'configuration_2.dart';
+
+enum AVISOS { LENTS, ESTOIG, SOLUCIO, REVISIO, PERSONALITZAT }
+
+final controller_lents = TextEditingController();
+final controller_estoig = TextEditingController();
+final controller_solucio = TextEditingController();
+
+bool error = false;
 
 class Configuration1 extends StatefulWidget {
   const Configuration1({Key? key}) : super(key: key);
@@ -35,16 +45,22 @@ class _Configuration1State extends State<Configuration1> {
             ),
             Expanded(
               flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const SmallText(text: "Lents"),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      MainInput(text: "Vida útil"),
-                      SizedBox(width: 30),
-                      MainInput(text: "Avís"),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SmallText(text: "Lents"),
+                      MainInput(text: "Vida útil", controller: controller_lents)
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SmallText(text: "Estoig"),
+                      MainInput(
+                          text: "Vida útil", controller: controller_estoig)
                     ],
                   ),
                 ],
@@ -55,32 +71,8 @@ class _Configuration1State extends State<Configuration1> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const SmallText(text: "Estoig"),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      MainInput(text: "Vida útil"),
-                      SizedBox(width: 30),
-                      MainInput(text: "Avís"),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
                   const SmallText(text: "Solució"),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      MainInput(text: "Vida útil"),
-                      SizedBox(width: 30),
-                      MainInput(text: "Avís"),
-                    ],
-                  )
+                  MainInput(text: "Vida útil", controller: controller_solucio)
                 ],
               ),
             ),
@@ -116,20 +108,68 @@ class _Configuration1State extends State<Configuration1> {
             ),
             Expanded(
               flex: 0,
-              child: TextButton(
-                child: const Text("Continuar", style: TextStyle(fontSize: 10)),
-                style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(100, 40),
-                    shape: const StadiumBorder(),
-                    primary: Colors.grey,
-                    onPrimary: Colors.black),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Configuration2()),
-                  );
-                },
+              child: Column(
+                children: [
+                  TextButton(
+                    child:
+                        const Text("Continuar", style: TextStyle(fontSize: 10)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(100, 40),
+                        shape: const StadiumBorder(),
+                        primary: Colors.grey,
+                        onPrimary: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        if (controller_estoig.text == "" ||
+                            controller_lents.text == "" ||
+                            controller_solucio.text == "" ||
+                            _dateTime == null) {
+                          error = true;
+                          return;
+                        }
+                        error = false;
+                      });
+                      if (error) {
+                        return;
+                      }
+
+                      final db = FirebaseFirestore.instance
+                          .collection("usuarios")
+                          .doc(FirebaseAuth.instance.currentUser?.email
+                              .toString())
+                          .collection("avisos");
+
+                      var today = DateTime.now();
+
+                      db.add({
+                        'tipo': AVISOS.ESTOIG.index,
+                        'tiempo': today.add(
+                            Duration(days: int.parse(controller_estoig.text))),
+                      });
+                      db.add({
+                        'tipo': AVISOS.LENTS.index,
+                        'tiempo': today.add(
+                            Duration(days: int.parse(controller_lents.text))),
+                      });
+                      db.add({
+                        'tipo': AVISOS.SOLUCIO.index,
+                        'tiempo': today.add(
+                            Duration(days: int.parse(controller_solucio.text))),
+                      });
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Configuration2()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 2),
+                  error == true
+                      ? const Text("Falta omplir dades",
+                          style: TextStyle(color: Colors.red))
+                      : Container(),
+                ],
               ),
             ),
             Expanded(flex: 1, child: Container())
@@ -142,9 +182,12 @@ class _Configuration1State extends State<Configuration1> {
 
 class MainInput extends StatelessWidget {
   final String text;
+  final TextEditingController controller;
+
   const MainInput({
     Key? key,
     required this.text,
+    required this.controller,
   }) : super(key: key);
 
   @override
@@ -155,6 +198,7 @@ class MainInput extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(10),
         child: TextField(
+          controller: controller,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 14),

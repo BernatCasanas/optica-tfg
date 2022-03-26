@@ -6,6 +6,8 @@ import 'package:optica/principal_app.dart';
 
 import 'app.dart';
 
+enum HISTORIAL { GRADUACIO, POSAR, TREURE, ESTOIG, BLISTER, SOLUCIO }
+
 class Configuration2 extends StatefulWidget {
   const Configuration2({Key? key}) : super(key: key);
 
@@ -32,6 +34,8 @@ List<TextEditingController> controllers = [
   controller2_3,
   controller2_4
 ];
+
+bool error = false;
 
 class _Configuration2State extends State<Configuration2> {
   DateTime? _dateTime;
@@ -98,6 +102,25 @@ class _Configuration2State extends State<Configuration2> {
                           primary: Colors.grey,
                           onPrimary: Colors.black),
                       onPressed: () {
+                        setState(() {
+                          if (controller1_1.text == "" ||
+                              controller1_2.text == "" ||
+                              controller1_3.text == "" ||
+                              controller1_4.text == "" ||
+                              controller2_1.text == "" ||
+                              controller2_2.text == "" ||
+                              controller2_3.text == "" ||
+                              controller2_4.text == "" ||
+                              _dateTime == null) {
+                            error = true;
+                            return;
+                          }
+                          error = false;
+                        });
+                        if (error) {
+                          return;
+                        }
+
                         List<int> graduation = [
                           int.parse(controller1_1.text),
                           int.parse(controller1_2.text),
@@ -114,11 +137,20 @@ class _Configuration2State extends State<Configuration2> {
                             .collection("historial")
                             .add({
                           'fecha': _dateTime,
-                          'tipo': '2',
+                          'tipo': HISTORIAL.GRADUACIO.index,
                           'graduación': graduation
                         });
+                        controller1_1.text = controller1_2.text =
+                            controller1_3.text = controller1_4.text =
+                                controller2_1.text = controller2_2.text =
+                                    controller2_3.text =
+                                        controller2_4.text = "";
                       },
                     ),
+                    error == true
+                        ? const Text("Falta omplir dades",
+                            style: TextStyle(color: Colors.red))
+                        : Container(),
                   ],
                 ),
               ),
@@ -219,7 +251,7 @@ class _LentInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var add = numColumn == 1 ? 0 : 3;
+    var add = numColumn == 1 ? 0 : 4;
     return Column(
       children: [
         const Icon(Icons.remove_red_eye_outlined, size: 80),
