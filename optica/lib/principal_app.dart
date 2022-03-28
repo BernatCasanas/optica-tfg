@@ -1,14 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/configuration_1.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 final pages = <Widget>[
   const Alertes(),
-  const Progres(),
+  const Calendari(),
   const Ofertes(),
   const Editar(),
 ];
+
+DateTime? _date = DateTime.now();
+TimeOfDay? _time = TimeOfDay.now();
+TextEditingController person = TextEditingController();
 
 int indexPage = 0;
 
@@ -128,12 +133,18 @@ class _NavigatorBar extends StatelessWidget {
 
 //Pantalles que després aniràn en diferents arxius
 
-class Alertes extends StatelessWidget {
+class Alertes extends StatefulWidget {
   const Alertes({Key? key}) : super(key: key);
 
   @override
+  State<Alertes> createState() => _AlertesState();
+}
+
+class _AlertesState extends State<Alertes> {
+  @override
   Widget build(BuildContext context) {
     FirebaseFirestore db = FirebaseFirestore.instance;
+    setState(() {});
     return Column(
       children: [
         Expanded(
@@ -164,10 +175,31 @@ class Alertes extends StatelessWidget {
                                           Radius.circular(20))),
                                   child: ListTile(
                                     leading: const Icon(Icons.star),
-                                    title:
-                                        Text("Tipus ${e['tipo'].toString()}"),
-                                    subtitle: Text(
-                                        "Queden ${e['tiempo'].toString()} dies"),
+                                    title: e['tipo'] != 4
+                                        ? Text(AVISOS.values
+                                            .elementAt(e['tipo'])
+                                            .name)
+                                        : Text(e['nombre']),
+                                    subtitle: Text(e['tiempo']
+                                                .toDate()
+                                                .difference(DateTime.now())
+                                                .inDays >
+                                            1
+                                        ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inDays.toString()} dies"
+                                        : e['tiempo']
+                                                    .toDate()
+                                                    .difference(DateTime.now())
+                                                    .inHours >
+                                                0
+                                            ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inHours.toString()} hores"
+                                            : e['tiempo']
+                                                        .toDate()
+                                                        .difference(
+                                                            DateTime.now())
+                                                        .inMinutes >
+                                                    0
+                                                ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inMinutes.toString()} minuts"
+                                                : "Ha vençut"),
                                   ),
                                 ),
                               ],
@@ -185,7 +217,122 @@ class Alertes extends StatelessWidget {
         Expanded(
           flex: 0,
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Alterta Personalitzada'),
+                      content: StreamBuilder(
+                        stream: db
+                            .collection("usuarios")
+                            .doc(FirebaseAuth.instance.currentUser!.email
+                                .toString())
+                            .collection("avisos")
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasData) {
+                            return SizedBox(
+                                height: 200,
+                                width: 250,
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  showDatePicker(
+                                                    context: context,
+                                                    initialDate: DateTime.now()
+                                                        .add(const Duration(
+                                                            seconds: 1)),
+                                                    firstDate: DateTime.now(),
+                                                    lastDate: DateTime(2100),
+                                                  ).then((value) {
+                                                    setState(() {
+                                                      _date = value;
+                                                    });
+                                                  });
+                                                },
+                                                child: Text(
+                                                    "${_date!.day}/${_date!.month}/${_date!.year}")),
+                                            TextButton(
+                                                onPressed: () {
+                                                  showTimePicker(
+                                                    context: context,
+                                                    initialTime: TimeOfDay(
+                                                        hour:
+                                                            DateTime.now().hour,
+                                                        minute: DateTime.now()
+                                                            .minute),
+                                                  ).then((value) {
+                                                    _time = value;
+                                                  });
+                                                },
+                                                child: Text(
+                                                    "${_time!.hour}:${_time!.minute}")),
+                                          ]),
+                                      TextField(
+                                        controller: person,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(fontSize: 14),
+                                        decoration: const InputDecoration(
+                                          border: OutlineInputBorder(),
+                                          hintText: "Nom alerta",
+                                        ),
+                                      ),
+                                      TextButton(
+                                        child: const Text("Guardar",
+                                            style: TextStyle(fontSize: 10)),
+                                        style: ElevatedButton.styleFrom(
+                                            minimumSize: const Size(100, 40),
+                                            shape: const StadiumBorder(),
+                                            primary: Colors.grey,
+                                            onPrimary: Colors.black),
+                                        onPressed: () {
+                                          db
+                                              .collection("usuarios")
+                                              .doc(FirebaseAuth
+                                                  .instance.currentUser?.email
+                                                  .toString())
+                                              .collection("avisos")
+                                              .add({
+                                            'tiempo': DateTime(
+                                                _date!.year,
+                                                _date!.month,
+                                                _date!.day,
+                                                _time!.hour,
+                                                _time!.minute),
+                                            'tipo': AVISOS.PERSONALITZAT.index,
+                                            'nombre': person.text,
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ));
+                          } else {
+                            return Container();
+                          }
+                        },
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Tanca'),
+                        ),
+                      ],
+                    );
+                  });
+            },
             child: const Text("Alerta Personalitzada"),
             style: ElevatedButton.styleFrom(
                 minimumSize: const Size(300, 40),
@@ -200,18 +347,29 @@ class Alertes extends StatelessWidget {
   }
 }
 
-class Progres extends StatefulWidget {
-  const Progres({Key? key}) : super(key: key);
+class Calendari extends StatefulWidget {
+  const Calendari({Key? key}) : super(key: key);
 
   @override
-  State<Progres> createState() => _ProgresState();
+  State<Calendari> createState() => _CalendariState();
 }
 
-class _ProgresState extends State<Progres> {
-  DateTime _selectedDay = DateTime.now();
+class _CalendariState extends State<Calendari> {
+  DateTime selectedDay1 = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
+  Map<DateTime, List<Event>> selectedEvents = {};
+
   @override
+  void initState() {
+    super.initState();
+    selectedEvents = {};
+  }
+
+  List<Event> _getEventsFromDay(DateTime date) {
+    return selectedEvents[date] ?? [];
+  }
+
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -223,13 +381,14 @@ class _ProgresState extends State<Progres> {
             firstDay: DateTime.utc(2022, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: DateTime.now(),
+            eventLoader: _getEventsFromDay,
             selectedDayPredicate: (day) {
-              return isSameDay(_selectedDay, day);
+              return isSameDay(selectedDay1, day);
             },
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
-                _selectedDay = selectedDay;
-                _focusedDay = focusedDay; // update `_focusedDay` here as well
+                selectedDay1 = selectedDay;
+                _focusedDay = focusedDay;
               });
             },
             calendarFormat: _calendarFormat,
@@ -248,13 +407,16 @@ class _ProgresState extends State<Progres> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     "Titulo",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
-                  Text("Descripción"),
+                  ..._getEventsFromDay(selectedDay1)
+                      .map((Event event) => ListTile(
+                            title: Text(event.title),
+                          )),
                 ],
               ),
             ),
@@ -265,79 +427,139 @@ class _ProgresState extends State<Progres> {
   }
 }
 
+class Event {
+  final String title;
+  Event({required this.title});
+
+  String getString() => this.title;
+}
+
 class Ofertes extends StatelessWidget {
   const Ofertes({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        Center(
-          child: Container(
-            height: 120,
-            width: 300,
-            decoration: const BoxDecoration(
-                color: Colors.amber,
-                borderRadius: BorderRadius.all(Radius.circular(35))),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text("data"),
-                SizedBox(height: 20),
-                Text("data"),
-              ],
-            ),
-          ),
-        ),
-        StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasData) {
-              List<DocumentSnapshot> offers = snapshot.data!.docs;
-              return Column(
-                children: [
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height - 334,
-                    width: 340,
-                    child: GridView.builder(
-                      itemCount: offers.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
+    List<Color> level = [
+      Colors.black,
+      Colors.red,
+      Colors.orange,
+      Colors.yellow,
+      Colors.greenAccent,
+      Colors.green,
+    ];
+    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+      future: FirebaseFirestore.instance
+          .collection("usuarios")
+          .doc(FirebaseAuth.instance.currentUser?.email.toString())
+          .get(),
+      builder: (_, snapshot) {
+        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
+
+        if (snapshot.hasData) {
+          var data = snapshot.data!.data();
+          var value = data!['nivel_recompensa'];
+          return Column(
+            children: [
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  height: 120,
+                  width: 300,
+                  decoration: BoxDecoration(
+                      color: level.elementAt(value),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(35))),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Nivell $value",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25),
                       ),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        final expire = offers[index]['fecha_caduca'].toDate();
-                        final now = DateTime.now();
-                        final difference = now.difference(expire).inDays;
-                        if (difference > 0) {
-                          return _BoxOffer(
-                              //hi ha algo que no em deix. si trec la condició em deix imprimirho
-                              days: difference,
-                              price: double.parse(offers[index]['precio']),
-                              title: offers[index]['nombre'],
-                              description: offers[index]['descripción']);
-                        } else {
-                          return Container();
-                        }
-                      },
-                    ),
+                      const SizedBox(height: 20),
+                      Text(getLevel(value)),
+                    ],
                   ),
-                ],
-              );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-      ],
+                ),
+              ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection("ofertas")
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    List<DocumentSnapshot> offers = snapshot.data!.docs;
+                    return Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height - 400,
+                          width: 340,
+                          child: GridView.builder(
+                            itemCount: offers.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, int index) {
+                              final expire =
+                                  offers[index]['fecha_caduca'].toDate();
+                              final now = DateTime.now();
+                              final difference = expire.difference(now).inDays;
+                              if (difference > 0) {
+                                return _BoxOffer(
+                                    days: difference,
+                                    price: offers[index]['precio'],
+                                    title: offers[index]['nombre'],
+                                    description: offers[index]['descripción']);
+                              } else {
+                                return Container();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const CircularProgressIndicator();
+                  }
+                },
+              ),
+            ],
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
+  }
+}
+
+String getLevel(int level) {
+  switch (level) {
+    case 1:
+      return "Malament";
+      break;
+    case 2:
+      return "Millorable";
+      break;
+    case 3:
+      return "Acceptable";
+      break;
+    case 4:
+      return "Correcte";
+      break;
+    case 5:
+      return "Admirable";
+      break;
+    default:
+      return "Sense Nivell";
   }
 }
 
@@ -368,23 +590,26 @@ class _BoxOffer extends StatelessWidget {
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: const [
-              Text("2d"),
-              SizedBox(),
-              Text("13,99€"),
+            children: [
+              Text(days.toString()),
+              const SizedBox(),
+              Text("${price.toString()}€"),
             ],
           ),
           const Icon(Icons.photo),
           Column(
-            children: const [
+            children: [
               Text(
-                "data",
+                title,
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 2),
-              Text("data lorem impum")
+              const SizedBox(height: 2),
+              Text(
+                description,
+                textAlign: TextAlign.center,
+              )
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
           ),
         ],
       ),
