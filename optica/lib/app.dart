@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:optica/configuration_1.dart';
 import 'package:optica/principal_app.dart';
 
-final TextEditingController controller_nombre = TextEditingController();
-final TextEditingController controller_codigo = TextEditingController();
+final TextEditingController controllerNombre = TextEditingController();
+final TextEditingController controllerCodigo = TextEditingController();
 final currentUser = FirebaseAuth.instance.currentUser;
 
 bool error = false;
@@ -33,45 +33,10 @@ class App extends StatelessWidget {
           }
         }
 
-        return const Center(child: const CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
-    // return FutureBuilder<QuerySnapshot>(
-    //   future: FirebaseFirestore.instance
-    //       .collection("usuarios")
-    //       .get(),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.hasData) {
-    //       final List<DocumentSnapshot> documents = snapshot.data!.docs;
-    //       documents.where((element) => element.data().toString()==currentUser?.email.toString())
-    //       if () {
-    //         return const _FirstConnection();
-    //       } else {
-    //         return const Principal();
-    //       }
-    //     } else {
-    //       return Container();
-    //     }
-    //   },
-    // );
   }
-}
-
-Future<bool> GetFirstConnection() async {
-  var doc = await FirebaseFirestore.instance
-      .collection("usuarios")
-      .doc(currentUser?.email.toString());
-  return doc.get().then(
-    (value) {
-      if (value.exists) {
-        if (value.data()?['codigo'] == "") {
-          return true;
-        }
-        return false;
-      }
-      return false;
-    },
-  );
 }
 
 class _FirstConnection extends StatefulWidget {
@@ -191,7 +156,7 @@ class _ButtonState extends State<_Button> {
     return ElevatedButton(
       onPressed: () {
         setState(() {
-          if (controller_codigo.text == "" || controller_nombre.text == "") {
+          if (controllerCodigo.text == "" || controllerNombre.text == "") {
             error = true;
             return;
           }
@@ -205,8 +170,8 @@ class _ButtonState extends State<_Button> {
             .collection("usuarios")
             .doc(currentUser?.email.toString())
             .update({
-          'codigo': controller_codigo.text,
-          'nombre': controller_nombre.text
+          'codigo': controllerCodigo.text,
+          'nombre': controllerNombre.text
         });
         Navigator.push(
           context,
@@ -231,7 +196,7 @@ class _InputBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller1 = name == "Nom" ? controller_nombre : controller_codigo;
+    final controller1 = name == "Nom" ? controllerNombre : controllerCodigo;
 
     return Container(
       width: 260,

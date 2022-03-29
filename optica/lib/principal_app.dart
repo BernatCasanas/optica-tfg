@@ -415,7 +415,7 @@ class _CalendariState extends State<Calendari> {
                     "Titulo",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ..._getEventsFromDay(selectedDay1)
                       .map((Event event) => ListTile(
                             title: Text(event.title),
@@ -604,7 +604,8 @@ class _BoxOffer extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 2),
               Text(
@@ -647,7 +648,6 @@ class Editar extends StatelessWidget {
               return TextButton(
                 onPressed: () {
                   if (index != 3) {
-                    int dies_lents = 0;
                     TextEditingController controller = TextEditingController();
                     bool canPop = false;
                     showDialog(
@@ -738,7 +738,7 @@ class Editar extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Text(
                     texts[index],
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   color: Colors.grey,
                 ),
