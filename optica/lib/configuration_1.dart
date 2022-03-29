@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +10,9 @@ import 'configuration_2.dart';
 
 enum AVISOS { LENTS, ESTOIG, SOLUCIO, REVISIO, PERSONALITZAT }
 
-final controller_lents = TextEditingController();
-final controller_estoig = TextEditingController();
-final controller_solucio = TextEditingController();
+final controllerLents = TextEditingController();
+final controllerEstoig = TextEditingController();
+final controllerSolucio = TextEditingController();
 
 bool error = false;
 
@@ -52,15 +54,14 @@ class _Configuration1State extends State<Configuration1> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SmallText(text: "Lents"),
-                      MainInput(text: "Vida útil", controller: controller_lents)
+                      MainInput(text: "Vida útil", controller: controllerLents)
                     ],
                   ),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SmallText(text: "Estoig"),
-                      MainInput(
-                          text: "Vida útil", controller: controller_estoig)
+                      MainInput(text: "Vida útil", controller: controllerEstoig)
                     ],
                   ),
                 ],
@@ -72,7 +73,7 @@ class _Configuration1State extends State<Configuration1> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   const SmallText(text: "Solució"),
-                  MainInput(text: "Vida útil", controller: controller_solucio)
+                  MainInput(text: "Vida útil", controller: controllerSolucio)
                 ],
               ),
             ),
@@ -120,9 +121,9 @@ class _Configuration1State extends State<Configuration1> {
                         onPrimary: Colors.black),
                     onPressed: () {
                       setState(() {
-                        if (controller_estoig.text == "" ||
-                            controller_lents.text == "" ||
-                            controller_solucio.text == "" ||
+                        if (controllerEstoig.text == "" ||
+                            controllerLents.text == "" ||
+                            controllerSolucio.text == "" ||
                             _dateTime == null) {
                           error = true;
                           return;
@@ -144,17 +145,17 @@ class _Configuration1State extends State<Configuration1> {
                       db.add({
                         'tipo': AVISOS.ESTOIG.index,
                         'tiempo': today.add(
-                            Duration(days: int.parse(controller_estoig.text))),
+                            Duration(days: int.parse(controllerEstoig.text))),
                       });
                       db.add({
                         'tipo': AVISOS.LENTS.index,
                         'tiempo': today.add(
-                            Duration(days: int.parse(controller_lents.text))),
+                            Duration(days: int.parse(controllerLents.text))),
                       });
                       db.add({
                         'tipo': AVISOS.SOLUCIO.index,
                         'tiempo': today.add(
-                            Duration(days: int.parse(controller_solucio.text))),
+                            Duration(days: int.parse(controllerSolucio.text))),
                       });
 
                       Navigator.push(
