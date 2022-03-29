@@ -160,7 +160,8 @@ class _Configuration1State extends State<Configuration1> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Configuration2()),
+                            builder: (context) =>
+                                const Configuration2(fromEditScreen: false)),
                       );
                     },
                   ),

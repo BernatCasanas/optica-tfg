@@ -9,7 +9,10 @@ import 'app.dart';
 enum HISTORIAL { GRADUACIO, POSAR, TREURE, ESTOIG, BLISTER, SOLUCIO }
 
 class Configuration2 extends StatefulWidget {
-  const Configuration2({Key? key}) : super(key: key);
+  const Configuration2({Key? key, required this.fromEditScreen})
+      : super(key: key);
+
+  final bool fromEditScreen;
 
   @override
   State<Configuration2> createState() => _Configuration2State();
@@ -226,11 +229,13 @@ class _Configuration2State extends State<Configuration2> {
                             primary: Colors.grey,
                             onPrimary: Colors.black),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Principal()),
-                          );
+                          !widget.fromEditScreen
+                              ? Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Principal()),
+                                )
+                              : Navigator.of(context).pop();
                         },
                       ),
                     ],

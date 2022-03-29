@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:optica/configuration_1.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import 'configuration_2.dart';
+
 final pages = <Widget>[
   const Alertes(),
   const Calendari(),
@@ -35,6 +37,7 @@ class _PrincipalState extends State<Principal> {
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           bottomNavigationBar: _NavigatorBar(notifyParent: Refresh),
           body: Column(
             children: [
@@ -642,7 +645,95 @@ class Editar extends StatelessWidget {
             itemCount: 4,
             itemBuilder: (BuildContext ctx, index) {
               return TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (index != 3) {
+                    int dies_lents = 0;
+                    TextEditingController controller = TextEditingController();
+                    bool canPop = false;
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(texts.elementAt(index)),
+                          content: SizedBox(
+                            height: index != 0 ? 30 : 90,
+                            child: index == 0
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      const Text("Introdueix vida útil"),
+                                      TextField(
+                                        keyboardType: TextInputType.number,
+                                        controller: controller,
+                                      )
+                                    ],
+                                  )
+                                : const Text("Es crearà un avís"),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: const Text("D'acord"),
+                              onPressed: () {
+                                canPop = true;
+                                if (controller.text != "" && index == 0) {
+                                  canPop = true;
+                                } else if (index != 0) {
+                                  canPop = true;
+                                }
+
+                                if (!canPop) return;
+
+                                var dir = FirebaseFirestore.instance
+                                    .collection("usuarios")
+                                    .doc(FirebaseAuth
+                                        .instance.currentUser?.email
+                                        .toString())
+                                    .collection("avisos");
+                                var today = DateTime.now();
+
+                                switch (index) {
+                                  case 0:
+                                    dir.add({
+                                      'tipo': AVISOS.LENTS.index,
+                                      'tiempo': today.add(Duration(
+                                          days: int.parse(controller.text))),
+                                    });
+
+                                    break;
+                                  case 1:
+                                    dir.add({
+                                      'tipo': AVISOS.SOLUCIO.index,
+                                      'tiempo':
+                                          today.add(const Duration(days: 60)),
+                                    });
+                                    break;
+                                  case 2:
+                                    dir.add({
+                                      'tipo': AVISOS.ESTOIG.index,
+                                      'tiempo':
+                                          today.add(const Duration(days: 90)),
+                                    });
+                                    break;
+                                  default:
+                                }
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  if (index == 3) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const Configuration2(fromEditScreen: true)),
+                    );
+                  }
+                },
                 child: Container(
                   alignment: Alignment.center,
                   child: Text(
@@ -664,7 +755,52 @@ class Editar extends StatelessWidget {
               shape: const StadiumBorder(),
               primary: Colors.grey,
               onPrimary: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Historial'),
+                    content: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection("usuarios")
+                          .doc(FirebaseAuth.instance.currentUser!.email
+                              .toString())
+                          .collection("historial")
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          return SizedBox(
+                            height: 100,
+                            width: 100,
+                            child: ListView(
+                                children: snapshot.data!.docs.map((e) {
+                              return Card(
+                                child: ListTile(
+                                  title: Text(e['tipo'].toString()),
+                                ),
+                              );
+                            }).toList()),
+                          );
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Tanca'),
+                      ),
+                    ],
+                  );
+                });
+          },
         ),
         const SizedBox(height: 10),
         Expanded(
@@ -677,14 +813,10 @@ class Editar extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: const [
                     Text(
-                      "Situació actual del temps",
+                      "Espai per afegir més editables",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 4),
-                    Text("data"),
-                    Text("data"),
-                    Text("data"),
-                    Text("data"),
                   ],
                 ),
               ),
