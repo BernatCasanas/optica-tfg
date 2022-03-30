@@ -191,16 +191,30 @@ class _Configuration2State extends State<Configuration2> {
                                         return const CircularProgressIndicator();
                                       } else if (snapshot.hasData) {
                                         return SizedBox(
-                                          height: 100,
+                                          height: 400,
                                           width: 100,
                                           child: ListView(
                                               children:
                                                   snapshot.data!.docs.map((e) {
+                                            DateTime? date =
+                                                e['fecha'].toDate();
+                                            List<dynamic> graduacion =
+                                                <dynamic>[];
+                                            if (e['tipo'] == 2) {
+                                              graduacion =
+                                                  List.from(e['graduación']);
+                                            }
                                             return Card(
-                                              child: ListTile(
-                                                title:
-                                                    Text(e['tipo'].toString()),
-                                              ),
+                                              child: e['tipo'] == 2
+                                                  ? ListTile(
+                                                      leading: const Icon(
+                                                          Icons.lens_blur),
+                                                      title: Text(
+                                                          "${date!.day}/${date.month}/${date.year}"),
+                                                      subtitle: Text(graduacion
+                                                          .toString()),
+                                                    )
+                                                  : Container(),
                                             );
                                           }).toList()),
                                         );
