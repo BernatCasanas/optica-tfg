@@ -774,13 +774,51 @@ class Editar extends StatelessWidget {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasData) {
                           return SizedBox(
-                            height: 100,
+                            height: 400,
                             width: 100,
                             child: ListView(
                                 children: snapshot.data!.docs.map((e) {
+                              String title = "";
+                              IconData icon = Icons.abc_outlined;
+                              DateTime? _date = e['fecha'].toDate();
+                              String subtitle =
+                                  "${_date!.day}/${_date.month}/${_date.year}";
+
+                              switch (e['tipo']) {
+                                case 0:
+                                  title = "Va canviar la graduació";
+                                  icon = Icons.lens_blur;
+                                  break;
+                                case 1:
+                                  title = "Es va posar les lents";
+                                  icon = Icons.lens_rounded;
+                                  break;
+                                case 2:
+                                  title = "Es va treure les lents";
+                                  icon = Icons.lens_outlined;
+                                  break;
+                                case 3:
+                                  title = "Va canviar d'estoig";
+                                  icon = Icons.lens_blur;
+                                  break;
+                                case 4:
+                                  title = "Va obrir un blister";
+                                  icon = Icons.opacity_rounded;
+                                  break;
+                                case 5:
+                                  title = "Va obrir una solució";
+                                  icon = Icons.water;
+                                  break;
+                                default:
+                              }
                               return Card(
                                 child: ListTile(
-                                  title: Text(e['tipo'].toString()),
+                                  title: Text(
+                                    title,
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                  subtitle: Text(subtitle),
+                                  leading: Icon(icon),
                                 ),
                               );
                             }).toList()),
