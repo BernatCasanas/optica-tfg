@@ -200,12 +200,12 @@ class _Configuration2State extends State<Configuration2> {
                                                 e['fecha'].toDate();
                                             List<dynamic> graduacion =
                                                 <dynamic>[];
-                                            if (e['tipo'] == 2) {
+                                            if (e['tipo'] == 0) {
                                               graduacion =
                                                   List.from(e['graduación']);
                                             }
                                             return Card(
-                                              child: e['tipo'] == 2
+                                              child: e['tipo'] == 0
                                                   ? ListTile(
                                                       leading: const Icon(
                                                           Icons.lens_blur),

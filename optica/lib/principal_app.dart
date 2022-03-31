@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/app.dart';
 import 'package:optica/configuration_1.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -18,6 +19,8 @@ TimeOfDay? _time = TimeOfDay.now();
 TextEditingController person = TextEditingController();
 
 int indexPage = 0;
+
+bool wearLents = false;
 
 class Principal extends StatefulWidget {
   const Principal({Key? key}) : super(key: key);
@@ -54,6 +57,62 @@ class _PrincipalState extends State<Principal> {
                               pages[indexPage].toString(),
                               style: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold),
+                            ),
+                            FutureBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              future: FirebaseFirestore.instance
+                                  .collection("usuarios")
+                                  .doc(FirebaseAuth.instance.currentUser?.email)
+                                  .get(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<dynamic> snapshot) {
+                                if (snapshot.hasData) {
+                                  var data = snapshot.data!.data();
+                                  wearLents = data['llevaLentillas'];
+                                  return TextButton(
+                                      onPressed: () {
+                                        FirebaseFirestore.instance
+                                            .collection("usuarios")
+                                            .doc(FirebaseAuth
+                                                .instance.currentUser?.email)
+                                            .update(
+                                                {'llevaLentillas': !wearLents});
+                                        FirebaseFirestore.instance
+                                            .collection("usuarios")
+                                            .doc(FirebaseAuth
+                                                .instance.currentUser?.email)
+                                            .collection("historial")
+                                            .add({
+                                          'tipo': !wearLents
+                                              ? HISTORIAL.POSAR.index
+                                              : HISTORIAL.TREURE.index,
+                                          'fecha': DateTime.now(),
+                                        });
+                                        setState(() {
+                                          wearLents = !wearLents;
+                                        });
+                                      },
+                                      child: wearLents
+                                          ? const Text('Treure Lents')
+                                          : const Text("Posar Lents"),
+                                      style: ButtonStyle(
+                                          side: MaterialStateProperty.all(
+                                              const BorderSide(
+                                                  width: 2,
+                                                  color: Colors.grey)),
+                                          foregroundColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.black),
+                                          padding: MaterialStateProperty.all(
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 10,
+                                                  horizontal: 50)),
+                                          textStyle: MaterialStateProperty.all(
+                                              const TextStyle(fontSize: 15))));
+                                } else {
+                                  return Container();
+                                }
+                              },
                             ),
                             TextButton(
                               onPressed: () {
@@ -179,9 +238,8 @@ class _AlertesState extends State<Alertes> {
                                   child: ListTile(
                                     leading: const Icon(Icons.star),
                                     title: e['tipo'] != 4
-                                        ? Text(AVISOS.values
-                                            .elementAt(e['tipo'])
-                                            .name)
+                                        ? Text(
+                                            "Canviar ${AVISOS.values.elementAt(e['tipo']).name.toLowerCase()}")
                                         : Text(e['nombre']),
                                     subtitle: Text(e['tiempo']
                                                 .toDate()
@@ -690,6 +748,14 @@ class Editar extends StatelessWidget {
                                         .instance.currentUser?.email
                                         .toString())
                                     .collection("avisos");
+
+                                var dir2 = FirebaseFirestore.instance
+                                    .collection("usuarios")
+                                    .doc(FirebaseAuth
+                                        .instance.currentUser?.email
+                                        .toString())
+                                    .collection("historial");
+
                                 var today = DateTime.now();
 
                                 switch (index) {
@@ -699,7 +765,10 @@ class Editar extends StatelessWidget {
                                       'tiempo': today.add(Duration(
                                           days: int.parse(controller.text))),
                                     });
-
+                                    dir2.add({
+                                      'tipo': HISTORIAL.BLISTER.index,
+                                      'fecha': DateTime.now(),
+                                    });
                                     break;
                                   case 1:
                                     dir.add({
@@ -707,12 +776,20 @@ class Editar extends StatelessWidget {
                                       'tiempo':
                                           today.add(const Duration(days: 60)),
                                     });
+                                    dir2.add({
+                                      'tipo': HISTORIAL.SOLUCIO.index,
+                                      'fecha': DateTime.now(),
+                                    });
                                     break;
                                   case 2:
                                     dir.add({
                                       'tipo': AVISOS.ESTOIG.index,
                                       'tiempo':
                                           today.add(const Duration(days: 90)),
+                                    });
+                                    dir2.add({
+                                      'tipo': HISTORIAL.ESTOIG.index,
+                                      'fecha': DateTime.now(),
                                     });
                                     break;
                                   default:
