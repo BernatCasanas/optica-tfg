@@ -15,10 +15,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore.instance
+        .collection("usuarios")
+        .doc(currentUser?.email)
+        .set({
+      'codigo': '',
+      'llevaLentillas': false,
+      'nivel_recompensa': 1,
+      'nombre': "",
+    });
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       future: FirebaseFirestore.instance
           .collection("usuarios")
-          .doc(currentUser?.email.toString())
+          .doc(currentUser?.email)
           .get(),
       builder: (_, snapshot) {
         if (snapshot.hasError) return Text('Error = ${snapshot.error}');
