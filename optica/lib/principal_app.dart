@@ -468,16 +468,10 @@ class _CalendariState extends State<Calendari> {
   DateTime selectedDay1 = DateTime.now();
   DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
-  Map<DateTime, List<Event>> selectedEvents = {};
 
   @override
   void initState() {
     super.initState();
-    selectedEvents = {};
-  }
-
-  List<Event> _getEventsFromDay(DateTime date) {
-    return selectedEvents[date] ?? [];
   }
 
   Widget build(BuildContext context) {
@@ -491,7 +485,6 @@ class _CalendariState extends State<Calendari> {
             firstDay: DateTime.utc(2022, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
             focusedDay: DateTime.now(),
-            eventLoader: _getEventsFromDay,
             selectedDayPredicate: (day) {
               return isSameDay(selectedDay1, day);
             },
@@ -517,16 +510,13 @@ class _CalendariState extends State<Calendari> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    "Titulo",
+                children: const [
+                  Text(
+                    "Dia",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 10),
-                  ..._getEventsFromDay(selectedDay1)
-                      .map((Event event) => ListTile(
-                            title: Text(event.title),
-                          )),
+                  SizedBox(height: 10),
+                  Text("Avisos i Historial")
                 ],
               ),
             ),
@@ -535,13 +525,6 @@ class _CalendariState extends State<Calendari> {
       ],
     );
   }
-}
-
-class Event {
-  final String title;
-  Event({required this.title});
-
-  String getString() => this.title;
 }
 
 class Ofertes extends StatelessWidget {
