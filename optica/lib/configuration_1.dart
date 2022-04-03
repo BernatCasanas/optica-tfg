@@ -11,8 +11,7 @@ import 'configuration_2.dart';
 enum AVISOS { LENTS, ESTOIG, SOLUCIO, REVISIO, PERSONALITZAT }
 
 final controllerLents = TextEditingController();
-final controllerEstoig = TextEditingController();
-final controllerSolucio = TextEditingController();
+final controllerDuracio = TextEditingController();
 
 bool error = false;
 
@@ -60,20 +59,11 @@ class _Configuration1State extends State<Configuration1> {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const SmallText(text: "Estoig"),
-                      MainInput(text: "Vida útil", controller: controllerEstoig)
+                      const SmallText(text: "Duració Lents"),
+                      MainInput(
+                          text: "Temps diari", controller: controllerDuracio)
                     ],
                   ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const SmallText(text: "Solució"),
-                  MainInput(text: "Vida útil", controller: controllerSolucio)
                 ],
               ),
             ),
@@ -121,9 +111,8 @@ class _Configuration1State extends State<Configuration1> {
                         onPrimary: Colors.black),
                     onPressed: () {
                       setState(() {
-                        if (controllerEstoig.text == "" ||
+                        if (controllerDuracio.text == "" ||
                             controllerLents.text == "" ||
-                            controllerSolucio.text == "" ||
                             _dateTime == null) {
                           error = true;
                           return;
@@ -136,16 +125,14 @@ class _Configuration1State extends State<Configuration1> {
 
                       final db = FirebaseFirestore.instance
                           .collection("usuarios")
-                          .doc(FirebaseAuth.instance.currentUser?.email
-                              .toString())
+                          .doc(FirebaseAuth.instance.currentUser?.email)
                           .collection("avisos");
 
                       var today = DateTime.now();
 
                       db.add({
                         'tipo': AVISOS.ESTOIG.index,
-                        'tiempo': today.add(
-                            Duration(days: int.parse(controllerEstoig.text))),
+                        'tiempo': today.add(Duration(days: 90)),
                       });
                       db.add({
                         'tipo': AVISOS.LENTS.index,
@@ -154,8 +141,19 @@ class _Configuration1State extends State<Configuration1> {
                       });
                       db.add({
                         'tipo': AVISOS.SOLUCIO.index,
-                        'tiempo': today.add(
-                            Duration(days: int.parse(controllerSolucio.text))),
+                        'tiempo': today.add(Duration(days: 60)),
+                      });
+                      db.add({
+                        'tipo': AVISOS.REVISIO.index,
+                        'tiempo':
+                            today.add(_dateTime!.difference(DateTime.now())),
+                      });
+
+                      FirebaseFirestore.instance
+                          .collection("usuarios")
+                          .doc(FirebaseAuth.instance.currentUser?.email)
+                          .update({
+                        'duración_diaria': int.parse(controllerDuracio.text)
                       });
 
                       Navigator.push(

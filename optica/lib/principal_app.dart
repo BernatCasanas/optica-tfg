@@ -88,6 +88,21 @@ class _PrincipalState extends State<Principal> {
                                               : HISTORIAL.TREURE.index,
                                           'fecha': DateTime.now(),
                                         });
+                                        if (!wearLents) {
+                                          FirebaseFirestore.instance
+                                              .collection("usuarios")
+                                              .doc(FirebaseAuth
+                                                  .instance.currentUser?.email)
+                                              .collection("avisos")
+                                              .add({
+                                            'nombre': "Treure les lents",
+                                            'tipo': 4,
+                                            'tiempo': DateTime.now().add(
+                                                Duration(
+                                                    hours: data[
+                                                        'duración_diaria'])),
+                                          });
+                                        }
                                         setState(() {
                                           wearLents = !wearLents;
                                         });
@@ -216,6 +231,7 @@ class _AlertesState extends State<Alertes> {
                   .collection("usuarios")
                   .doc(FirebaseAuth.instance.currentUser!.email.toString())
                   .collection("avisos")
+                  .orderBy('tiempo')
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -226,6 +242,16 @@ class _AlertesState extends State<Alertes> {
                       Expanded(
                         child: ListView(
                           children: snapshot.data!.docs.map<Widget>((e) {
+                            bool justName = false;
+                            String title = "";
+                            if (e['tipo'] == 3) {
+                              justName = true;
+                              title = "Revisió";
+                            }
+                            if (e['tipo'] == 4) {
+                              justName = true;
+                              title = e['nombre'];
+                            }
                             return Column(
                               children: [
                                 const SizedBox(height: 10),
@@ -236,11 +262,34 @@ class _AlertesState extends State<Alertes> {
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(20))),
                                   child: ListTile(
-                                    leading: const Icon(Icons.star),
-                                    title: e['tipo'] != 4
+                                    trailing: TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            FirebaseFirestore.instance
+                                                .collection("usuarios")
+                                                .doc(FirebaseAuth.instance
+                                                    .currentUser?.email)
+                                                .collection("avisos")
+                                                .doc(e.id)
+                                                .delete();
+                                          });
+                                        },
+                                        child: const Icon(Icons.close,
+                                            color: Colors.black)),
+                                    leading: e['tipo'] == 0
+                                        ? const Icon(Icons.remove_red_eye)
+                                        : e['tipo'] == 1
+                                            ? const Icon(Icons.camera_sharp)
+                                            : e['tipo'] == 2
+                                                ? const Icon(Icons.water)
+                                                : e['tipo'] == 3
+                                                    ? const Icon(Icons
+                                                        .record_voice_over_sharp)
+                                                    : const Icon(Icons.star),
+                                    title: !justName
                                         ? Text(
                                             "Canviar ${AVISOS.values.elementAt(e['tipo']).name.toLowerCase()}")
-                                        : Text(e['nombre']),
+                                        : Text(title),
                                     subtitle: Text(e['tiempo']
                                                 .toDate()
                                                 .difference(DateTime.now())
@@ -707,6 +756,7 @@ class Editar extends StatelessWidget {
                 onPressed: () {
                   if (index != 3) {
                     TextEditingController controller = TextEditingController();
+                    TextEditingController controller1 = TextEditingController();
                     bool canPop = false;
                     showDialog(
                       context: context,
@@ -724,6 +774,11 @@ class Editar extends StatelessWidget {
                                       TextField(
                                         keyboardType: TextInputType.number,
                                         controller: controller,
+                                      ),
+                                      const Text("Introdueix duració diaria"),
+                                      TextField(
+                                        keyboardType: TextInputType.number,
+                                        controller: controller1,
                                       )
                                     ],
                                   )
@@ -734,7 +789,9 @@ class Editar extends StatelessWidget {
                               child: const Text("D'acord"),
                               onPressed: () {
                                 canPop = true;
-                                if (controller.text != "" && index == 0) {
+                                if (controller.text != "" &&
+                                    controller1.text != "" &&
+                                    index == 0) {
                                   canPop = true;
                                 } else if (index != 0) {
                                   canPop = true;
@@ -745,15 +802,13 @@ class Editar extends StatelessWidget {
                                 var dir = FirebaseFirestore.instance
                                     .collection("usuarios")
                                     .doc(FirebaseAuth
-                                        .instance.currentUser?.email
-                                        .toString())
+                                        .instance.currentUser?.email)
                                     .collection("avisos");
 
                                 var dir2 = FirebaseFirestore.instance
                                     .collection("usuarios")
                                     .doc(FirebaseAuth
-                                        .instance.currentUser?.email
-                                        .toString())
+                                        .instance.currentUser?.email)
                                     .collection("historial");
 
                                 var today = DateTime.now();
@@ -764,6 +819,14 @@ class Editar extends StatelessWidget {
                                       'tipo': AVISOS.LENTS.index,
                                       'tiempo': today.add(Duration(
                                           days: int.parse(controller.text))),
+                                    });
+                                    FirebaseFirestore.instance
+                                        .collection("usuarios")
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser?.email)
+                                        .update({
+                                      'duración_diaria':
+                                          int.parse(controller1.text)
                                     });
                                     dir2.add({
                                       'tipo': HISTORIAL.BLISTER.index,

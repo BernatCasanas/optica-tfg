@@ -6,7 +6,6 @@ import 'package:optica/principal_app.dart';
 
 final TextEditingController controllerNombre = TextEditingController();
 final TextEditingController controllerCodigo = TextEditingController();
-final currentUser = FirebaseAuth.instance.currentUser;
 
 bool error = false;
 
@@ -15,30 +14,32 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore.instance
-        .collection("usuarios")
-        .doc(currentUser?.email)
-        .set({
-      'codigo': '',
-      'llevaLentillas': false,
-      'nivel_recompensa': 1,
-      'nombre': "",
-    });
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       future: FirebaseFirestore.instance
           .collection("usuarios")
-          .doc(currentUser?.email)
+          .doc(FirebaseAuth.instance.currentUser?.email)
           .get(),
-      builder: (_, snapshot) {
-        if (snapshot.hasError) return Text('Error = ${snapshot.error}');
-
-        if (snapshot.hasData) {
-          var data = snapshot.data!.data();
-          var value = data!['codigo'];
-          if (value == "") {
-            return const _FirstConnection();
-          } else {
-            return const Principal();
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData) {
+            var data;
+            var value;
+            try {
+              data = snapshot.data!.data();
+              value = data!['codigo'];
+              return const Principal();
+            } catch (e) {
+              FirebaseFirestore.instance
+                  .collection("usuarios")
+                  .doc(FirebaseAuth.instance.currentUser?.email)
+                  .set({
+                'codigo': "",
+                'llevaLentillas': false,
+                'nivel_recompensa': 1,
+                'nombre': "",
+              });
+              return const _FirstConnection();
+            }
           }
         }
 
@@ -177,7 +178,7 @@ class _ButtonState extends State<_Button> {
 
         FirebaseFirestore.instance
             .collection("usuarios")
-            .doc(currentUser?.email.toString())
+            .doc(FirebaseAuth.instance.currentUser?.email.toString())
             .update({
           'codigo': controllerCodigo.text,
           'nombre': controllerNombre.text
