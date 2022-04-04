@@ -54,7 +54,13 @@ class _PrincipalState extends State<Principal> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              pages[indexPage].toString(),
+                              indexPage == 0
+                                  ? "Alertes"
+                                  : indexPage == 1
+                                      ? "Calendari"
+                                      : indexPage == 2
+                                          ? "Ofertes"
+                                          : "Editar",
                               style: const TextStyle(
                                   fontSize: 25, fontWeight: FontWeight.bold),
                             ),
@@ -902,7 +908,7 @@ class Editar extends StatelessWidget {
                             child: ListView(
                                 children: snapshot.data!.docs.map((e) {
                               String title = "";
-                              IconData icon = Icons.abc_outlined;
+                              IconData icon = Icons.star;
                               DateTime? _date = e['fecha'].toDate();
                               String subtitle =
                                   "${_date!.day}/${_date.month}/${_date.year}";
@@ -914,7 +920,7 @@ class Editar extends StatelessWidget {
                                   break;
                                 case 1:
                                   title = "Es va posar les lents";
-                                  icon = Icons.lens_rounded;
+                                  icon = Icons.lens;
                                   break;
                                 case 2:
                                   title = "Es va treure les lents";
@@ -922,11 +928,11 @@ class Editar extends StatelessWidget {
                                   break;
                                 case 3:
                                   title = "Va canviar d'estoig";
-                                  icon = Icons.lens_blur;
+                                  icon = Icons.cached_sharp;
                                   break;
                                 case 4:
                                   title = "Va obrir un blister";
-                                  icon = Icons.opacity_rounded;
+                                  icon = Icons.opacity;
                                   break;
                                 case 5:
                                   title = "Va obrir una solució";
