@@ -68,8 +68,8 @@ class Editar extends StatelessWidget {
 
                                 if (!canPop) return;
 
-                                var dir = getCurrentUserRef().collection("avisos");
-                                var dir2 = getCurrentUserRef().collection("historial");
+                                var dir = getUserRef().collection("avisos");
+                                var dir2 = getUserRef().collection("historial");
                                 var today = DateTime.now();
 
                                 switch (index) {

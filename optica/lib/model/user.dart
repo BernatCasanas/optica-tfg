@@ -18,7 +18,7 @@ class Usuari {
 
   Future<void> toggleContactLenses() async {
     portaLentilles = !portaLentilles;
-    final userRef = getCurrentUserRef();
+    final userRef = getUserRef();
     userRef.update({'llevaLentillas': portaLentilles});
     userRef.collection("historial").add({
       'tipo': portaLentilles ? Historial.posar.index : Historial.treure.index,
@@ -42,13 +42,13 @@ String getCurrentUserId() {
   return user.email!;
 }
 
-DocumentReference<Map<String, dynamic>> getCurrentUserRef() {
+DocumentReference<Map<String, dynamic>> getUserRef() {
   String userId = getCurrentUserId();
   return FirebaseFirestore.instance.collection("usuarios").doc(userId);
 }
 
-Future<Usuari?> maybeGetCurrentUser() async {
-  final userRef = getCurrentUserRef();
+Future<Usuari?> maybeGetUser() async {
+  final userRef = getUserRef();
   final doc = await userRef.get();
   if (!doc.exists) {
     return null;
@@ -57,10 +57,10 @@ Future<Usuari?> maybeGetCurrentUser() async {
   }
 }
 
-Stream<Usuari> currentUserStream() => getCurrentUserRef().snapshots().map((doc) => Usuari.fromFirestore(doc.data()!));
+Stream<Usuari> currentUserStream() => getUserRef().snapshots().map((doc) => Usuari.fromFirestore(doc.data()!));
 
 Future<void> initializeUserData() async {
-  return getCurrentUserRef().set({
+  return getUserRef().set({
     'codigo': "",
     'llevaLentillas': false,
     'nivel_recompensa': 1,

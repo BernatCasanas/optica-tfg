@@ -27,7 +27,7 @@ class OpticaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: FutureBuilder<Usuari?>(
-        future: maybeGetCurrentUser(),
+        future: maybeGetUser(),
         builder: (BuildContext context, AsyncSnapshot<Usuari?> snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
