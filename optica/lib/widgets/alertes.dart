@@ -11,6 +11,14 @@ class Alertes extends StatefulWidget {
   State<Alertes> createState() => _AlertesState();
 }
 
+const List<Icon> iconaAlerta = [
+  Icon(Icons.remove_red_eye),
+  Icon(Icons.camera_sharp),
+  Icon(Icons.water),
+  Icon(Icons.record_voice_over_sharp),
+  Icon(Icons.star),
+];
+
 class _AlertesState extends State<Alertes> {
   TextEditingController person = TextEditingController();
 
@@ -65,15 +73,7 @@ class _AlertesState extends State<Alertes> {
                                           });
                                         },
                                         child: const Icon(Icons.close, color: Colors.black)),
-                                    leading: alerta.tipo == 0
-                                        ? const Icon(Icons.remove_red_eye)
-                                        : alerta.tipo == 1
-                                            ? const Icon(Icons.camera_sharp)
-                                            : alerta.tipo == 2
-                                                ? const Icon(Icons.water)
-                                                : alerta.tipo == 3
-                                                    ? const Icon(Icons.record_voice_over_sharp)
-                                                    : const Icon(Icons.star),
+                                    leading: iconaAlerta[alerta.tipo],
                                     title: !justName
                                         ? Text("Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
                                         : Text(title),
