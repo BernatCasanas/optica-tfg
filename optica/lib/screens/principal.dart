@@ -18,8 +18,6 @@ const List<Page> pages = [
   Page("Editar", Editar()),
 ];
 
-TextEditingController person = TextEditingController();
-
 int indexPage = 0;
 
 class Principal extends StatefulWidget {
@@ -174,6 +172,8 @@ class Alertes extends StatefulWidget {
 }
 
 class _AlertesState extends State<Alertes> {
+  TextEditingController person = TextEditingController();
+
   DateTime? _date = DateTime.now();
   TimeOfDay? _time = TimeOfDay.now();
 
