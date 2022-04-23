@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/user.dart';
 import 'package:optica/widgets/alertes.dart';
@@ -81,7 +80,7 @@ class _PrincipalState extends State<Principal> {
                         },
                       ),
                       TextButton(
-                        onPressed: FirebaseAuth.instance.signOut,
+                        onPressed: signOut,
                         child: Container(
                           decoration: const BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(20)),

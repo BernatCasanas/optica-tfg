@@ -34,6 +34,10 @@ class Usuari {
   }
 }
 
+Future<void> signOut() async {
+  await FirebaseAuth.instance.signOut();
+}
+
 String getCurrentUserId() {
   final user = FirebaseAuth.instance.currentUser!;
   if (user.email == null) {
