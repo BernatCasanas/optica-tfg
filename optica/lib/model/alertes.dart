@@ -15,10 +15,14 @@ class Alerta {
     tiempo = (data['tiempo'] as Timestamp).toDate();
     tipo = data['tipo'];
   }
+
+  void delete() {
+    getUserRef().collection("avisos").doc(id).delete();
+  }
 }
 
 Stream<List<Alerta>> getUserAlerts() async* {
-  final stream = getCurrentUserRef().collection("avisos").orderBy('tiempo').snapshots();
+  final stream = getUserRef().collection("avisos").orderBy('tiempo').snapshots();
   await for (final docList in stream) {
     yield docList.docs.map((doc) => Alerta.fromDocumentSnapshot(doc)).toList();
   }

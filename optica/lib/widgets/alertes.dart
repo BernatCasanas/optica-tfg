@@ -58,21 +58,14 @@ class _AlertesState extends State<Alertes> {
                                 Container(
                                   width: 350,
                                   decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: const BorderRadius.all(Radius.circular(20))),
+                                    color: Colors.grey[300],
+                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                  ),
                                   child: ListTile(
                                     trailing: TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            FirebaseFirestore.instance
-                                                .collection("usuarios")
-                                                .doc(FirebaseAuth.instance.currentUser?.email)
-                                                .collection("avisos")
-                                                .doc(alerta.id)
-                                                .delete();
-                                          });
-                                        },
-                                        child: const Icon(Icons.close, color: Colors.black)),
+                                      onPressed: () => alerta.delete(),
+                                      child: const Icon(Icons.close, color: Colors.black),
+                                    ),
                                     leading: iconaAlerta[alerta.tipo],
                                     title: !justName
                                         ? Text("Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
@@ -104,12 +97,8 @@ class _AlertesState extends State<Alertes> {
                     return AlertDialog(
                       title: const Text('Alterta Personalitzada'),
                       content: StreamBuilder(
-                        stream: db
-                            .collection("usuarios")
-                            .doc(FirebaseAuth.instance.currentUser!.email.toString())
-                            .collection("avisos")
-                            .snapshots(),
-                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        stream: getUserAlerts(),
+                        builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
                           if (snapshot.hasError) {
                             return const CircularProgressIndicator();
                           } else if (snapshot.hasData) {
@@ -119,8 +108,10 @@ class _AlertesState extends State<Alertes> {
                                 child: Center(
                                   child: Column(
                                     children: [
-                                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                                        TextButton(
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          TextButton(
                                             onPressed: () {
                                               showDatePicker(
                                                 context: context,
@@ -133,8 +124,9 @@ class _AlertesState extends State<Alertes> {
                                                 });
                                               });
                                             },
-                                            child: Text("${_date!.day}/${_date!.month}/${_date!.year}")),
-                                        TextButton(
+                                            child: Text("${_date!.day}/${_date!.month}/${_date!.year}"),
+                                          ),
+                                          TextButton(
                                             onPressed: () {
                                               showTimePicker(
                                                 context: context,
@@ -144,8 +136,10 @@ class _AlertesState extends State<Alertes> {
                                                 _time = value;
                                               });
                                             },
-                                            child: Text("${_time!.hour}:${_time!.minute}")),
-                                      ]),
+                                            child: Text("${_time!.hour}:${_time!.minute}"),
+                                          ),
+                                        ],
+                                      ),
                                       TextField(
                                         controller: person,
                                         textAlign: TextAlign.center,
