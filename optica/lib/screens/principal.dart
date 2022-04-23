@@ -180,7 +180,6 @@ class _AlertesState extends State<Alertes> {
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore db = FirebaseFirestore.instance;
-    setState(() {});
     return Column(
       children: [
         Expanded(
