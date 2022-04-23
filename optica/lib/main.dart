@@ -10,11 +10,10 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  initializeDateFormatting().then(
-    (_) => runApp(
-      const AuthGate(
-        app: App(),
-      ),
+  await initializeDateFormatting();
+  runApp(
+    const AuthGate(
+      app: App(),
     ),
   );
 }
