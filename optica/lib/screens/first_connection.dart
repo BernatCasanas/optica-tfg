@@ -2,50 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/configuration_1.dart';
-import 'package:optica/principal_app.dart';
+import 'package:optica/widgets/big_text.dart';
 
-class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).get(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return const Center(child: CircularProgressIndicator());
-          case ConnectionState.active:
-            return ErrorWidget("No esperaba un ConnectionState.active al FutureBuilder de l'usuari");
-          case ConnectionState.none:
-            return ErrorWidget("No esperaba un ConnectionState.none al FutureBuilder de l'usuari");
-          case ConnectionState.done:
-            final data = snapshot.data!;
-            if (!data.exists) {
-              FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).set({
-                'codigo': "",
-                'llevaLentillas': false,
-                'nivel_recompensa': 1,
-                'nombre': "",
-              });
-              return const _FirstConnection();
-            } else {
-              return const Principal();
-            }
-        }
-      },
-    );
-  }
-}
-
-class _FirstConnection extends StatefulWidget {
-  const _FirstConnection({Key? key}) : super(key: key);
+class FirstConnection extends StatefulWidget {
+  const FirstConnection({Key? key}) : super(key: key);
 
   @override
-  State<_FirstConnection> createState() => _FirstConnectionState();
+  State<FirstConnection> createState() => _FirstConnectionState();
 }
 
-class _FirstConnectionState extends State<_FirstConnection> {
+class _FirstConnectionState extends State<FirstConnection> {
   TextEditingController controllerCodigo = TextEditingController();
   TextEditingController controllerNombre = TextEditingController();
   bool buttonEnabled = false;
@@ -133,40 +99,6 @@ class _FirstConnectionState extends State<_FirstConnection> {
   }
 }
 
-class BigText extends StatelessWidget {
-  final String text;
-
-  const BigText({
-    Key? key,
-    required this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-    );
-  }
-}
-
-class SmallText extends StatelessWidget {
-  final String text;
-
-  const SmallText({
-    Key? key,
-    required this.text,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    );
-  }
-}
-
 class _InputBox extends StatelessWidget {
   const _InputBox({
     Key? key,
@@ -191,10 +123,7 @@ class _InputBox extends StatelessWidget {
             height: 35,
             child: TextField(
               controller: controller,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
         ],

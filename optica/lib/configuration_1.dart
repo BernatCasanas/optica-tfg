@@ -3,8 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:optica/app.dart';
 import 'package:intl/intl.dart';
+import 'package:optica/widgets/big_text.dart';
+import 'package:optica/widgets/small_text.dart';
 
 import 'configuration_2.dart';
 

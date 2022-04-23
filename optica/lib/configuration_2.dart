@@ -4,15 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:optica/principal_app.dart';
-
-import 'app.dart';
+import 'package:optica/principal.dart';
+import 'package:optica/widgets/big_text.dart';
 
 enum HISTORIAL { GRADUACIO, POSAR, TREURE, ESTOIG, BLISTER, SOLUCIO }
 
 class Configuration2 extends StatefulWidget {
-  const Configuration2({Key? key, required this.fromEditScreen})
-      : super(key: key);
+  const Configuration2({Key? key, required this.fromEditScreen}) : super(key: key);
 
   final bool fromEditScreen;
 
@@ -76,9 +74,7 @@ class _Configuration2State extends State<Configuration2> {
                     ),
                     const SizedBox(height: 15),
                     TextButton(
-                      child: Text(_dateTime == null
-                          ? "Tria una data"
-                          : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                      child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(150, 40),
                           shape: const StadiumBorder(),
@@ -99,8 +95,7 @@ class _Configuration2State extends State<Configuration2> {
                     ),
                     const SizedBox(height: 15),
                     TextButton(
-                      child:
-                          const Text("Guardar", style: TextStyle(fontSize: 10)),
+                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -140,22 +135,12 @@ class _Configuration2State extends State<Configuration2> {
                             .collection("usuarios")
                             .doc(currentUser.email.toString())
                             .collection("historial")
-                            .add({
-                          'fecha': _dateTime,
-                          'tipo': HISTORIAL.GRADUACIO.index,
-                          'graduación': graduation
-                        });
-                        controller1_1.text = controller1_2.text =
-                            controller1_3.text = controller1_4.text =
-                                controller2_1.text = controller2_2.text =
-                                    controller2_3.text =
-                                        controller2_4.text = "";
+                            .add({'fecha': _dateTime, 'tipo': HISTORIAL.GRADUACIO.index, 'graduación': graduation});
+                        controller1_1.text = controller1_2.text = controller1_3.text = controller1_4.text =
+                            controller2_1.text = controller2_2.text = controller2_3.text = controller2_4.text = "";
                       },
                     ),
-                    error == true
-                        ? const Text("Falta omplir dades",
-                            style: TextStyle(color: Colors.red))
-                        : Container(),
+                    error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
                   ],
                 ),
               ),
@@ -164,8 +149,7 @@ class _Configuration2State extends State<Configuration2> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TextButton(
-                        child: const Text("Historial",
-                            style: TextStyle(fontSize: 20)),
+                        child: const Text("Historial", style: TextStyle(fontSize: 20)),
                         style: ElevatedButton.styleFrom(
                             minimumSize: const Size(100, 40),
                             shape: const StadiumBorder(),
@@ -180,13 +164,10 @@ class _Configuration2State extends State<Configuration2> {
                                   content: StreamBuilder(
                                     stream: db
                                         .collection("usuarios")
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser!.email
-                                            .toString())
+                                        .doc(FirebaseAuth.instance.currentUser!.email.toString())
                                         .collection("historial")
                                         .snapshots(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                                       if (snapshot.hasError) {
                                         return const CircularProgressIndicator();
                                       } else if (snapshot.hasData) {
@@ -194,25 +175,18 @@ class _Configuration2State extends State<Configuration2> {
                                           height: 400,
                                           width: 100,
                                           child: ListView(
-                                              children:
-                                                  snapshot.data!.docs.map((e) {
-                                            DateTime? date =
-                                                e['fecha'].toDate();
-                                            List<dynamic> graduacion =
-                                                <dynamic>[];
+                                              children: snapshot.data!.docs.map((e) {
+                                            DateTime? date = e['fecha'].toDate();
+                                            List<dynamic> graduacion = <dynamic>[];
                                             if (e['tipo'] == 0) {
-                                              graduacion =
-                                                  List.from(e['graduación']);
+                                              graduacion = List.from(e['graduación']);
                                             }
                                             return Card(
                                               child: e['tipo'] == 0
                                                   ? ListTile(
-                                                      leading: const Icon(
-                                                          Icons.lens_blur),
-                                                      title: Text(
-                                                          "${date!.day}/${date.month}/${date.year}"),
-                                                      subtitle: Text(graduacion
-                                                          .toString()),
+                                                      leading: const Icon(Icons.lens_blur),
+                                                      title: Text("${date!.day}/${date.month}/${date.year}"),
+                                                      subtitle: Text(graduacion.toString()),
                                                     )
                                                   : Container(),
                                             );
@@ -248,8 +222,7 @@ class _Configuration2State extends State<Configuration2> {
                           !widget.fromEditScreen
                               ? Navigator.push(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const Principal()),
+                                  MaterialPageRoute(builder: (context) => const Principal()),
                                 )
                               : Navigator.of(context).pop();
                         },
