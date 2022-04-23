@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/alertes.dart';
 import 'package:optica/utils/dates.dart';
@@ -27,7 +25,6 @@ class _AlertesState extends State<Alertes> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore db = FirebaseFirestore.instance;
     return Column(
       children: [
         Expanded(
@@ -92,102 +89,104 @@ class _AlertesState extends State<Alertes> {
           child: TextButton(
             onPressed: () {
               showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Alterta Personalitzada'),
-                      content: StreamBuilder(
-                        stream: getUserAlerts(),
-                        builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
-                          if (snapshot.hasError) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasData) {
-                            return SizedBox(
-                                height: 200,
-                                width: 250,
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              showDatePicker(
-                                                context: context,
-                                                initialDate: DateTime.now().add(const Duration(seconds: 1)),
-                                                firstDate: DateTime.now(),
-                                                lastDate: DateTime(2100),
-                                              ).then((value) {
-                                                setState(() {
-                                                  _date = value;
-                                                });
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Alterta Personalitzada'),
+                    content: StreamBuilder(
+                      stream: getUserAlerts(),
+                      builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
+                        if (snapshot.hasError) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasData) {
+                          return SizedBox(
+                              height: 200,
+                              width: 250,
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            showDatePicker(
+                                              context: context,
+                                              initialDate: DateTime.now().add(const Duration(seconds: 1)),
+                                              firstDate: DateTime.now(),
+                                              lastDate: DateTime(2100),
+                                            ).then((value) {
+                                              setState(() {
+                                                _date = value;
                                               });
-                                            },
-                                            child: Text("${_date!.day}/${_date!.month}/${_date!.year}"),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              showTimePicker(
-                                                context: context,
-                                                initialTime:
-                                                    TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
-                                              ).then((value) {
-                                                _time = value;
-                                              });
-                                            },
-                                            child: Text("${_time!.hour}:${_time!.minute}"),
-                                          ),
-                                        ],
-                                      ),
-                                      TextField(
-                                        controller: person,
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 14),
-                                        decoration: const InputDecoration(
-                                          border: OutlineInputBorder(),
-                                          hintText: "Nom alerta",
+                                            });
+                                          },
+                                          child: Text("${_date!.day}/${_date!.month}/${_date!.year}"),
                                         ),
-                                      ),
-                                      ElevatedButton(
-                                        child: const Text("Guardar", style: TextStyle(fontSize: 10)),
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: const Size(100, 40),
-                                          shape: const StadiumBorder(),
-                                          primary: Colors.grey,
-                                          onPrimary: Colors.black,
-                                          elevation: 0,
+                                        TextButton(
+                                          onPressed: () {
+                                            showTimePicker(
+                                              context: context,
+                                              initialTime:
+                                                  TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                                            ).then((value) {
+                                              _time = value;
+                                            });
+                                          },
+                                          child: Text("${_time!.hour}:${_time!.minute}"),
                                         ),
-                                        onPressed: () async {
-                                          final novaAlerta = Alerta(person.text, _date!, Avisos.personalitzat.index);
-                                          await novaAlerta.save();
-                                        },
+                                      ],
+                                    ),
+                                    TextField(
+                                      controller: person,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 14),
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        hintText: "Nom alerta",
                                       ),
-                                    ],
-                                  ),
-                                ));
-                          } else {
-                            return Container();
-                          }
+                                    ),
+                                    ElevatedButton(
+                                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                                      style: ElevatedButton.styleFrom(
+                                        minimumSize: const Size(100, 40),
+                                        shape: const StadiumBorder(),
+                                        primary: Colors.grey,
+                                        onPrimary: Colors.black,
+                                        elevation: 0,
+                                      ),
+                                      onPressed: () async {
+                                        final novaAlerta = Alerta(person.text, _date!, Avisos.personalitzat.index);
+                                        await novaAlerta.save();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ));
+                        } else {
+                          return Container();
+                        }
+                      },
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
                         },
+                        child: const Text('Tanca'),
                       ),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Tanca'),
-                        ),
-                      ],
-                    );
-                  });
+                    ],
+                  );
+                },
+              );
             },
             child: const Text("Alerta Personalitzada"),
             style: ElevatedButton.styleFrom(
-                minimumSize: const Size(300, 40),
-                shape: const StadiumBorder(),
-                primary: Colors.grey[400],
-                onPrimary: Colors.black),
+              minimumSize: const Size(300, 40),
+              shape: const StadiumBorder(),
+              primary: Colors.grey[400],
+              onPrimary: Colors.black,
+            ),
           ),
         ),
         const SizedBox(height: 15),
