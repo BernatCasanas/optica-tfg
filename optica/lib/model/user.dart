@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-enum Avisos { lents, estoig, solucio, revisio, personalitzat }
 enum Historial { graduacio, posar, treure, estoig, blister, solucio }
 
 class Usuari {

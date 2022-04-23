@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:optica/firebase_options.dart';
 import 'package:optica/model/user.dart';
-import 'package:optica/screens/principal.dart';
 import 'package:optica/screens/configura0_inici.dart';
+import 'package:optica/screens/principal.dart';
 import 'package:optica/widgets/auth_gate.dart';
 
 Future<void> main() async {

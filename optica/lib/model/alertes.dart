@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:optica/model/user.dart';
 
+enum Avisos { lents, estoig, solucio, revisio, personalitzat }
+
 class Alerta {
   late String id, nombre;
   late DateTime tiempo;
