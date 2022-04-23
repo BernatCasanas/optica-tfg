@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:optica/app.dart';
 import 'package:optica/configuration_1.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -30,8 +29,7 @@ class Principal extends StatefulWidget {
 }
 
 class _PrincipalState extends State<Principal> {
-  @override
-  Refresh() {
+  void refresh() {
     setState(() {});
   }
 
@@ -41,7 +39,7 @@ class _PrincipalState extends State<Principal> {
       home: SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          bottomNavigationBar: _NavigatorBar(notifyParent: Refresh),
+          bottomNavigationBar: _NavigatorBar(notifyParent: refresh),
           body: Column(
             children: [
               Expanded(
@@ -61,17 +59,14 @@ class _PrincipalState extends State<Principal> {
                                       : indexPage == 2
                                           ? "Ofertes"
                                           : "Editar",
-                              style: const TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                             ),
-                            FutureBuilder<
-                                DocumentSnapshot<Map<String, dynamic>>>(
+                            FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
                               future: FirebaseFirestore.instance
                                   .collection("usuarios")
                                   .doc(FirebaseAuth.instance.currentUser?.email)
                                   .get(),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<dynamic> snapshot) {
+                              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                                 if (snapshot.hasData) {
                                   var data = snapshot.data!.data();
                                   wearLents = data['llevaLentillas'];
@@ -79,57 +74,39 @@ class _PrincipalState extends State<Principal> {
                                       onPressed: () {
                                         FirebaseFirestore.instance
                                             .collection("usuarios")
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser?.email)
-                                            .update(
-                                                {'llevaLentillas': !wearLents});
+                                            .doc(FirebaseAuth.instance.currentUser?.email)
+                                            .update({'llevaLentillas': !wearLents});
                                         FirebaseFirestore.instance
                                             .collection("usuarios")
-                                            .doc(FirebaseAuth
-                                                .instance.currentUser?.email)
+                                            .doc(FirebaseAuth.instance.currentUser?.email)
                                             .collection("historial")
                                             .add({
-                                          'tipo': !wearLents
-                                              ? HISTORIAL.POSAR.index
-                                              : HISTORIAL.TREURE.index,
+                                          'tipo': !wearLents ? HISTORIAL.POSAR.index : HISTORIAL.TREURE.index,
                                           'fecha': DateTime.now(),
                                         });
                                         if (!wearLents) {
                                           FirebaseFirestore.instance
                                               .collection("usuarios")
-                                              .doc(FirebaseAuth
-                                                  .instance.currentUser?.email)
+                                              .doc(FirebaseAuth.instance.currentUser?.email)
                                               .collection("avisos")
                                               .add({
                                             'nombre': "Treure les lents",
                                             'tipo': 4,
-                                            'tiempo': DateTime.now().add(
-                                                Duration(
-                                                    hours: data[
-                                                        'duración_diaria'])),
+                                            'tiempo': DateTime.now().add(Duration(hours: data['duración_diaria'])),
                                           });
                                         }
                                         setState(() {
                                           wearLents = !wearLents;
                                         });
                                       },
-                                      child: wearLents
-                                          ? const Text('Treure Lents')
-                                          : const Text("Posar Lents"),
+                                      child: wearLents ? const Text('Treure Lents') : const Text("Posar Lents"),
                                       style: ButtonStyle(
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  width: 2,
-                                                  color: Colors.grey)),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.black),
+                                          side:
+                                              MaterialStateProperty.all(const BorderSide(width: 2, color: Colors.grey)),
+                                          foregroundColor: MaterialStateProperty.all(Colors.black),
                                           padding: MaterialStateProperty.all(
-                                              const EdgeInsets.symmetric(
-                                                  vertical: 10,
-                                                  horizontal: 50)),
-                                          textStyle: MaterialStateProperty.all(
-                                              const TextStyle(fontSize: 15))));
+                                              const EdgeInsets.symmetric(vertical: 10, horizontal: 50)),
+                                          textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 15))));
                                 } else {
                                   return Container();
                                 }
@@ -141,14 +118,12 @@ class _PrincipalState extends State<Principal> {
                               },
                               child: Container(
                                 decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20)),
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
                                   color: Colors.grey,
                                 ),
                                 width: 40,
                                 height: 40,
-                                child: const Icon(Icons.logout,
-                                    color: Colors.black),
+                                child: const Icon(Icons.logout, color: Colors.black),
                               ),
                             ),
                           ],
@@ -239,8 +214,7 @@ class _AlertesState extends State<Alertes> {
                   .collection("avisos")
                   .orderBy('tiempo')
                   .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
@@ -265,23 +239,20 @@ class _AlertesState extends State<Alertes> {
                                   width: 350,
                                   decoration: BoxDecoration(
                                       color: Colors.grey[300],
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(20))),
+                                      borderRadius: const BorderRadius.all(Radius.circular(20))),
                                   child: ListTile(
                                     trailing: TextButton(
                                         onPressed: () {
                                           setState(() {
                                             FirebaseFirestore.instance
                                                 .collection("usuarios")
-                                                .doc(FirebaseAuth.instance
-                                                    .currentUser?.email)
+                                                .doc(FirebaseAuth.instance.currentUser?.email)
                                                 .collection("avisos")
                                                 .doc(e.id)
                                                 .delete();
                                           });
                                         },
-                                        child: const Icon(Icons.close,
-                                            color: Colors.black)),
+                                        child: const Icon(Icons.close, color: Colors.black)),
                                     leading: e['tipo'] == 0
                                         ? const Icon(Icons.remove_red_eye)
                                         : e['tipo'] == 1
@@ -289,31 +260,16 @@ class _AlertesState extends State<Alertes> {
                                             : e['tipo'] == 2
                                                 ? const Icon(Icons.water)
                                                 : e['tipo'] == 3
-                                                    ? const Icon(Icons
-                                                        .record_voice_over_sharp)
+                                                    ? const Icon(Icons.record_voice_over_sharp)
                                                     : const Icon(Icons.star),
                                     title: !justName
-                                        ? Text(
-                                            "Canviar ${AVISOS.values.elementAt(e['tipo']).name.toLowerCase()}")
+                                        ? Text("Canviar ${AVISOS.values.elementAt(e['tipo']).name.toLowerCase()}")
                                         : Text(title),
-                                    subtitle: Text(e['tiempo']
-                                                .toDate()
-                                                .difference(DateTime.now())
-                                                .inDays >
-                                            1
+                                    subtitle: Text(e['tiempo'].toDate().difference(DateTime.now()).inDays > 1
                                         ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inDays.toString()} dies"
-                                        : e['tiempo']
-                                                    .toDate()
-                                                    .difference(DateTime.now())
-                                                    .inHours >
-                                                0
+                                        : e['tiempo'].toDate().difference(DateTime.now()).inHours > 0
                                             ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inHours.toString()} hores"
-                                            : e['tiempo']
-                                                        .toDate()
-                                                        .difference(
-                                                            DateTime.now())
-                                                        .inMinutes >
-                                                    0
+                                            : e['tiempo'].toDate().difference(DateTime.now()).inMinutes > 0
                                                 ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inMinutes.toString()} minuts"
                                                 : "Ha vençut"),
                                   ),
@@ -342,12 +298,10 @@ class _AlertesState extends State<Alertes> {
                       content: StreamBuilder(
                         stream: db
                             .collection("usuarios")
-                            .doc(FirebaseAuth.instance.currentUser!.email
-                                .toString())
+                            .doc(FirebaseAuth.instance.currentUser!.email.toString())
                             .collection("avisos")
                             .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           if (snapshot.hasError) {
                             return const CircularProgressIndicator();
                           } else if (snapshot.hasData) {
@@ -357,43 +311,33 @@ class _AlertesState extends State<Alertes> {
                                 child: Center(
                                   child: Column(
                                     children: [
-                                      Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            TextButton(
-                                                onPressed: () {
-                                                  showDatePicker(
-                                                    context: context,
-                                                    initialDate: DateTime.now()
-                                                        .add(const Duration(
-                                                            seconds: 1)),
-                                                    firstDate: DateTime.now(),
-                                                    lastDate: DateTime(2100),
-                                                  ).then((value) {
-                                                    setState(() {
-                                                      _date = value;
-                                                    });
-                                                  });
-                                                },
-                                                child: Text(
-                                                    "${_date!.day}/${_date!.month}/${_date!.year}")),
-                                            TextButton(
-                                                onPressed: () {
-                                                  showTimePicker(
-                                                    context: context,
-                                                    initialTime: TimeOfDay(
-                                                        hour:
-                                                            DateTime.now().hour,
-                                                        minute: DateTime.now()
-                                                            .minute),
-                                                  ).then((value) {
-                                                    _time = value;
-                                                  });
-                                                },
-                                                child: Text(
-                                                    "${_time!.hour}:${_time!.minute}")),
-                                          ]),
+                                      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                                        TextButton(
+                                            onPressed: () {
+                                              showDatePicker(
+                                                context: context,
+                                                initialDate: DateTime.now().add(const Duration(seconds: 1)),
+                                                firstDate: DateTime.now(),
+                                                lastDate: DateTime(2100),
+                                              ).then((value) {
+                                                setState(() {
+                                                  _date = value;
+                                                });
+                                              });
+                                            },
+                                            child: Text("${_date!.day}/${_date!.month}/${_date!.year}")),
+                                        TextButton(
+                                            onPressed: () {
+                                              showTimePicker(
+                                                context: context,
+                                                initialTime:
+                                                    TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                                              ).then((value) {
+                                                _time = value;
+                                              });
+                                            },
+                                            child: Text("${_time!.hour}:${_time!.minute}")),
+                                      ]),
                                       TextField(
                                         controller: person,
                                         textAlign: TextAlign.center,
@@ -404,8 +348,7 @@ class _AlertesState extends State<Alertes> {
                                         ),
                                       ),
                                       TextButton(
-                                        child: const Text("Guardar",
-                                            style: TextStyle(fontSize: 10)),
+                                        child: const Text("Guardar", style: TextStyle(fontSize: 10)),
                                         style: ElevatedButton.styleFrom(
                                             minimumSize: const Size(100, 40),
                                             shape: const StadiumBorder(),
@@ -414,17 +357,11 @@ class _AlertesState extends State<Alertes> {
                                         onPressed: () {
                                           db
                                               .collection("usuarios")
-                                              .doc(FirebaseAuth
-                                                  .instance.currentUser?.email
-                                                  .toString())
+                                              .doc(FirebaseAuth.instance.currentUser?.email.toString())
                                               .collection("avisos")
                                               .add({
                                             'tiempo': DateTime(
-                                                _date!.year,
-                                                _date!.month,
-                                                _date!.day,
-                                                _time!.hour,
-                                                _time!.minute),
+                                                _date!.year, _date!.month, _date!.day, _time!.hour, _time!.minute),
                                             'tipo': AVISOS.PERSONALITZAT.index,
                                             'nombre': person.text,
                                           });
@@ -472,7 +409,7 @@ class Calendari extends StatefulWidget {
 
 class _CalendariState extends State<Calendari> {
   DateTime selectedDay1 = DateTime.now();
-  DateTime _focusedDay = DateTime.now();
+  // DateTime _focusedDay = DateTime.now();
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
   @override
@@ -480,6 +417,7 @@ class _CalendariState extends State<Calendari> {
     super.initState();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -497,7 +435,7 @@ class _CalendariState extends State<Calendari> {
             onDaySelected: (selectedDay, focusedDay) {
               setState(() {
                 selectedDay1 = selectedDay;
-                _focusedDay = focusedDay;
+                // _focusedDay = focusedDay;
               });
             },
             calendarFormat: _calendarFormat,
@@ -565,16 +503,13 @@ class Ofertes extends StatelessWidget {
                   height: 120,
                   width: 300,
                   decoration: BoxDecoration(
-                      color: level.elementAt(value),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(35))),
+                      color: level.elementAt(value), borderRadius: const BorderRadius.all(Radius.circular(35))),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "Nivell $value",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 25),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                       ),
                       const SizedBox(height: 20),
                       Text(getLevel(value)),
@@ -583,11 +518,8 @@ class Ofertes extends StatelessWidget {
                 ),
               ),
               StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("ofertas")
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     List<DocumentSnapshot> offers = snapshot.data!.docs;
                     return Column(
@@ -598,8 +530,7 @@ class Ofertes extends StatelessWidget {
                           width: 340,
                           child: GridView.builder(
                             itemCount: offers.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
@@ -607,8 +538,7 @@ class Ofertes extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
-                              final expire =
-                                  offers[index]['fecha_caduca'].toDate();
+                              final expire = offers[index]['fecha_caduca'].toDate();
                               final now = DateTime.now();
                               final difference = expire.difference(now).inDays;
                               if (difference > 0) {
@@ -644,19 +574,14 @@ String getLevel(int level) {
   switch (level) {
     case 1:
       return "Malament";
-      break;
     case 2:
       return "Millorable";
-      break;
     case 3:
       return "Acceptable";
-      break;
     case 4:
       return "Correcte";
-      break;
     case 5:
       return "Admirable";
-      break;
     default:
       return "Sense Nivell";
   }
@@ -679,9 +604,7 @@ class _BoxOffer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.all(Radius.circular(35))),
+      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(35))),
       height: 50,
       width: 50,
       child: Column(
@@ -700,8 +623,7 @@ class _BoxOffer extends StatelessWidget {
             children: [
               Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 2),
               Text(
@@ -722,12 +644,7 @@ class Editar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> texts = {
-      "Obrir Blister",
-      "Obrir Solució",
-      "Canviar Estoig",
-      "Canviar Graduació"
-    }.toList();
+    List<String> texts = {"Obrir Blister", "Obrir Solució", "Canviar Estoig", "Canviar Graduació"}.toList();
 
     return Column(
       children: [
@@ -756,8 +673,7 @@ class Editar extends StatelessWidget {
                             height: index != 0 ? 30 : 90,
                             child: index == 0
                                 ? Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const Text("Introdueix vida útil"),
                                       TextField(
@@ -778,9 +694,7 @@ class Editar extends StatelessWidget {
                               child: const Text("D'acord"),
                               onPressed: () {
                                 canPop = true;
-                                if (controller.text != "" &&
-                                    controller1.text != "" &&
-                                    index == 0) {
+                                if (controller.text != "" && controller1.text != "" && index == 0) {
                                   canPop = true;
                                 } else if (index != 0) {
                                   canPop = true;
@@ -790,14 +704,12 @@ class Editar extends StatelessWidget {
 
                                 var dir = FirebaseFirestore.instance
                                     .collection("usuarios")
-                                    .doc(FirebaseAuth
-                                        .instance.currentUser?.email)
+                                    .doc(FirebaseAuth.instance.currentUser?.email)
                                     .collection("avisos");
 
                                 var dir2 = FirebaseFirestore.instance
                                     .collection("usuarios")
-                                    .doc(FirebaseAuth
-                                        .instance.currentUser?.email)
+                                    .doc(FirebaseAuth.instance.currentUser?.email)
                                     .collection("historial");
 
                                 var today = DateTime.now();
@@ -806,17 +718,12 @@ class Editar extends StatelessWidget {
                                   case 0:
                                     dir.add({
                                       'tipo': AVISOS.LENTS.index,
-                                      'tiempo': today.add(Duration(
-                                          days: int.parse(controller.text))),
+                                      'tiempo': today.add(Duration(days: int.parse(controller.text))),
                                     });
                                     FirebaseFirestore.instance
                                         .collection("usuarios")
-                                        .doc(FirebaseAuth
-                                            .instance.currentUser?.email)
-                                        .update({
-                                      'duración_diaria':
-                                          int.parse(controller1.text)
-                                    });
+                                        .doc(FirebaseAuth.instance.currentUser?.email)
+                                        .update({'duración_diaria': int.parse(controller1.text)});
                                     dir2.add({
                                       'tipo': HISTORIAL.BLISTER.index,
                                       'fecha': DateTime.now(),
@@ -825,8 +732,7 @@ class Editar extends StatelessWidget {
                                   case 1:
                                     dir.add({
                                       'tipo': AVISOS.SOLUCIO.index,
-                                      'tiempo':
-                                          today.add(const Duration(days: 60)),
+                                      'tiempo': today.add(const Duration(days: 60)),
                                     });
                                     dir2.add({
                                       'tipo': HISTORIAL.SOLUCIO.index,
@@ -836,8 +742,7 @@ class Editar extends StatelessWidget {
                                   case 2:
                                     dir.add({
                                       'tipo': AVISOS.ESTOIG.index,
-                                      'tiempo':
-                                          today.add(const Duration(days: 90)),
+                                      'tiempo': today.add(const Duration(days: 90)),
                                     });
                                     dir2.add({
                                       'tipo': HISTORIAL.ESTOIG.index,
@@ -857,9 +762,7 @@ class Editar extends StatelessWidget {
                   if (index == 3) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const Configuration2(fromEditScreen: true)),
+                      MaterialPageRoute(builder: (context) => const Configuration2(fromEditScreen: true)),
                     );
                   }
                 },
@@ -893,12 +796,10 @@ class Editar extends StatelessWidget {
                     content: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection("usuarios")
-                          .doc(FirebaseAuth.instance.currentUser!.email
-                              .toString())
+                          .doc(FirebaseAuth.instance.currentUser!.email.toString())
                           .collection("historial")
                           .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasData) {
@@ -910,8 +811,7 @@ class Editar extends StatelessWidget {
                               String title = "";
                               IconData icon = Icons.star;
                               DateTime? _date = e['fecha'].toDate();
-                              String subtitle =
-                                  "${_date!.day}/${_date.month}/${_date.year}";
+                              String subtitle = "${_date!.day}/${_date.month}/${_date.year}";
 
                               switch (e['tipo']) {
                                 case 0:

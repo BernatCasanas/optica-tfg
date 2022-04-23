@@ -15,24 +15,16 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: FirebaseFirestore.instance
-          .collection("usuarios")
-          .doc(FirebaseAuth.instance.currentUser?.email)
-          .get(),
+      future: FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).get(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasData) {
-            var data;
-            var value;
             try {
-              data = snapshot.data!.data();
-              value = data!['codigo'];
+              // final data = snapshot.data!.data();
+              // final value = data!['codigo'];
               return const Principal();
             } catch (e) {
-              FirebaseFirestore.instance
-                  .collection("usuarios")
-                  .doc(FirebaseAuth.instance.currentUser?.email)
-                  .set({
+              FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).set({
                 'codigo': "",
                 'llevaLentillas': false,
                 'nivel_recompensa': 1,
@@ -96,8 +88,7 @@ class _FirstConnectionState extends State<_FirstConnection> {
                     children: [
                       const _Button(name: "Accedeix"),
                       error == true
-                          ? const Text("Falta omplir dades",
-                              style: TextStyle(color: Colors.red))
+                          ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red))
                           : Container(),
                     ],
                   ),
@@ -179,10 +170,7 @@ class _ButtonState extends State<_Button> {
         FirebaseFirestore.instance
             .collection("usuarios")
             .doc(FirebaseAuth.instance.currentUser?.email.toString())
-            .update({
-          'codigo': controllerCodigo.text,
-          'nombre': controllerNombre.text
-        });
+            .update({'codigo': controllerCodigo.text, 'nombre': controllerNombre.text});
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Configuration1()),
@@ -190,9 +178,7 @@ class _ButtonState extends State<_Button> {
       },
       child: Text(widget.name),
       style: ElevatedButton.styleFrom(
-          minimumSize: const Size(200, 50),
-          shape: const StadiumBorder(),
-          primary: Colors.grey),
+          minimumSize: const Size(200, 50), shape: const StadiumBorder(), primary: Colors.grey),
     );
   }
 }

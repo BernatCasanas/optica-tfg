@@ -60,8 +60,7 @@ class _Configuration1State extends State<Configuration1> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const SmallText(text: "Duració Lents"),
-                      MainInput(
-                          text: "Temps diari", controller: controllerDuracio)
+                      MainInput(text: "Temps diari", controller: controllerDuracio)
                     ],
                   ),
                 ],
@@ -69,41 +68,36 @@ class _Configuration1State extends State<Configuration1> {
             ),
             Expanded(
               flex: 3,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SmallText(text: "Revisió"),
-                    TextButton(
-                      child: Text(_dateTime == null
-                          ? "Tria una data"
-                          : DateFormat("yyyy-MM-dd").format(_dateTime!)),
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(150, 40),
-                          shape: const StadiumBorder(),
-                          primary: Colors.grey,
-                          onPrimary: Colors.black),
-                      onPressed: () {
-                        showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2022),
-                                lastDate: DateTime(2030))
-                            .then((date) {
-                          setState(() {
-                            _dateTime = date;
-                          });
-                        });
-                      },
-                    )
-                  ]),
+              child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                const SmallText(text: "Revisió"),
+                TextButton(
+                  child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                  style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(150, 40),
+                      shape: const StadiumBorder(),
+                      primary: Colors.grey,
+                      onPrimary: Colors.black),
+                  onPressed: () {
+                    showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2022),
+                            lastDate: DateTime(2030))
+                        .then((date) {
+                      setState(() {
+                        _dateTime = date;
+                      });
+                    });
+                  },
+                )
+              ]),
             ),
             Expanded(
               flex: 0,
               child: Column(
                 children: [
                   TextButton(
-                    child:
-                        const Text("Continuar", style: TextStyle(fontSize: 10)),
+                    child: const Text("Continuar", style: TextStyle(fontSize: 10)),
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(100, 40),
                         shape: const StadiumBorder(),
@@ -111,9 +105,7 @@ class _Configuration1State extends State<Configuration1> {
                         onPrimary: Colors.black),
                     onPressed: () {
                       setState(() {
-                        if (controllerDuracio.text == "" ||
-                            controllerLents.text == "" ||
-                            _dateTime == null) {
+                        if (controllerDuracio.text == "" || controllerLents.text == "" || _dateTime == null) {
                           error = true;
                           return;
                         }
@@ -132,43 +124,34 @@ class _Configuration1State extends State<Configuration1> {
 
                       db.add({
                         'tipo': AVISOS.ESTOIG.index,
-                        'tiempo': today.add(Duration(days: 90)),
+                        'tiempo': today.add(const Duration(days: 90)),
                       });
                       db.add({
                         'tipo': AVISOS.LENTS.index,
-                        'tiempo': today.add(
-                            Duration(days: int.parse(controllerLents.text))),
+                        'tiempo': today.add(Duration(days: int.parse(controllerLents.text))),
                       });
                       db.add({
                         'tipo': AVISOS.SOLUCIO.index,
-                        'tiempo': today.add(Duration(days: 60)),
+                        'tiempo': today.add(const Duration(days: 60)),
                       });
                       db.add({
                         'tipo': AVISOS.REVISIO.index,
-                        'tiempo':
-                            today.add(_dateTime!.difference(DateTime.now())),
+                        'tiempo': today.add(_dateTime!.difference(DateTime.now())),
                       });
 
                       FirebaseFirestore.instance
                           .collection("usuarios")
                           .doc(FirebaseAuth.instance.currentUser?.email)
-                          .update({
-                        'duración_diaria': int.parse(controllerDuracio.text)
-                      });
+                          .update({'duración_diaria': int.parse(controllerDuracio.text)});
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const Configuration2(fromEditScreen: false)),
+                        MaterialPageRoute(builder: (context) => const Configuration2(fromEditScreen: false)),
                       );
                     },
                   ),
                   const SizedBox(height: 2),
-                  error == true
-                      ? const Text("Falta omplir dades",
-                          style: TextStyle(color: Colors.red))
-                      : Container(),
+                  error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
                 ],
               ),
             ),
