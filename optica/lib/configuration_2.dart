@@ -47,192 +47,190 @@ class _Configuration2State extends State<Configuration2> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Center(
-          child: Column(
-            children: [
-              //Total flex = 12
-              Expanded(
-                child: Container(),
-              ),
-              const Expanded(
-                child: BigText(text: "Configuració"),
-              ),
-              Expanded(
-                flex: 7,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        _LentInfo(numColumn: 1),
-                        SizedBox(width: 40),
-                        _LentInfo(numColumn: 2),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    TextButton(
-                      child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
-                      style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(150, 40),
-                          shape: const StadiumBorder(),
-                          primary: Colors.grey,
-                          onPrimary: Colors.black),
-                      onPressed: () {
-                        showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2022),
-                                lastDate: DateTime(2030))
-                            .then((date) {
-                          setState(() {
-                            _dateTime = date;
-                          });
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Center(
+        child: Column(
+          children: [
+            //Total flex = 12
+            Expanded(
+              child: Container(),
+            ),
+            const Expanded(
+              child: BigText(text: "Configuració"),
+            ),
+            Expanded(
+              flex: 7,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      _LentInfo(numColumn: 1),
+                      SizedBox(width: 40),
+                      _LentInfo(numColumn: 2),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  TextButton(
+                    child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(150, 40),
+                        shape: const StadiumBorder(),
+                        primary: Colors.grey,
+                        onPrimary: Colors.black),
+                    onPressed: () {
+                      showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2022),
+                              lastDate: DateTime(2030))
+                          .then((date) {
+                        setState(() {
+                          _dateTime = date;
                         });
-                      },
-                    ),
-                    const SizedBox(height: 15),
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  TextButton(
+                    child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                    style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(100, 40),
+                        shape: const StadiumBorder(),
+                        primary: Colors.grey,
+                        onPrimary: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        if (controller1_1.text == "" ||
+                            controller1_2.text == "" ||
+                            controller1_3.text == "" ||
+                            controller1_4.text == "" ||
+                            controller2_1.text == "" ||
+                            controller2_2.text == "" ||
+                            controller2_3.text == "" ||
+                            controller2_4.text == "" ||
+                            _dateTime == null) {
+                          error = true;
+                          return;
+                        }
+                        error = false;
+                      });
+                      if (error) {
+                        return;
+                      }
+
+                      List<int> graduation = [
+                        int.parse(controller1_1.text),
+                        int.parse(controller1_2.text),
+                        int.parse(controller1_3.text),
+                        int.parse(controller1_4.text),
+                        int.parse(controller2_1.text),
+                        int.parse(controller2_2.text),
+                        int.parse(controller2_3.text),
+                        int.parse(controller2_4.text),
+                      ];
+                      db
+                          .collection("usuarios")
+                          .doc(currentUser.email.toString())
+                          .collection("historial")
+                          .add({'fecha': _dateTime, 'tipo': HISTORIAL.GRADUACIO.index, 'graduación': graduation});
+                      controller1_1.text = controller1_2.text = controller1_3.text = controller1_4.text =
+                          controller2_1.text = controller2_2.text = controller2_3.text = controller2_4.text = "";
+                    },
+                  ),
+                  error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
+                ],
+              ),
+            ),
+            Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
                     TextButton(
-                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                      child: const Text("Historial", style: TextStyle(fontSize: 20)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
                           primary: Colors.grey,
                           onPrimary: Colors.black),
                       onPressed: () {
-                        setState(() {
-                          if (controller1_1.text == "" ||
-                              controller1_2.text == "" ||
-                              controller1_3.text == "" ||
-                              controller1_4.text == "" ||
-                              controller2_1.text == "" ||
-                              controller2_2.text == "" ||
-                              controller2_3.text == "" ||
-                              controller2_4.text == "" ||
-                              _dateTime == null) {
-                            error = true;
-                            return;
-                          }
-                          error = false;
-                        });
-                        if (error) {
-                          return;
-                        }
-
-                        List<int> graduation = [
-                          int.parse(controller1_1.text),
-                          int.parse(controller1_2.text),
-                          int.parse(controller1_3.text),
-                          int.parse(controller1_4.text),
-                          int.parse(controller2_1.text),
-                          int.parse(controller2_2.text),
-                          int.parse(controller2_3.text),
-                          int.parse(controller2_4.text),
-                        ];
-                        db
-                            .collection("usuarios")
-                            .doc(currentUser.email.toString())
-                            .collection("historial")
-                            .add({'fecha': _dateTime, 'tipo': HISTORIAL.GRADUACIO.index, 'graduación': graduation});
-                        controller1_1.text = controller1_2.text = controller1_3.text = controller1_4.text =
-                            controller2_1.text = controller2_2.text = controller2_3.text = controller2_4.text = "";
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Historial'),
+                                content: StreamBuilder(
+                                  stream: db
+                                      .collection("usuarios")
+                                      .doc(FirebaseAuth.instance.currentUser!.email.toString())
+                                      .collection("historial")
+                                      .snapshots(),
+                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                    if (snapshot.hasError) {
+                                      return const CircularProgressIndicator();
+                                    } else if (snapshot.hasData) {
+                                      return SizedBox(
+                                        height: 400,
+                                        width: 100,
+                                        child: ListView(
+                                            children: snapshot.data!.docs.map((e) {
+                                          DateTime? date = e['fecha'].toDate();
+                                          List<dynamic> graduacion = <dynamic>[];
+                                          if (e['tipo'] == 0) {
+                                            graduacion = List.from(e['graduación']);
+                                          }
+                                          return Card(
+                                            child: e['tipo'] == 0
+                                                ? ListTile(
+                                                    leading: const Icon(Icons.lens_blur),
+                                                    title: Text("${date!.day}/${date.month}/${date.year}"),
+                                                    subtitle: Text(graduacion.toString()),
+                                                  )
+                                                : Container(),
+                                          );
+                                        }).toList()),
+                                      );
+                                    } else {
+                                      return Container();
+                                    }
+                                  },
+                                ),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Tanca'),
+                                  ),
+                                ],
+                              );
+                            });
                       },
                     ),
-                    error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
+                    TextButton(
+                      child: const Text(
+                        "Continuar",
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(100, 40),
+                          shape: const StadiumBorder(),
+                          primary: Colors.grey,
+                          onPrimary: Colors.black),
+                      onPressed: () {
+                        !widget.fromEditScreen
+                            ? Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const Principal()),
+                              )
+                            : Navigator.of(context).pop();
+                      },
+                    ),
                   ],
                 ),
-              ),
-              Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      TextButton(
-                        child: const Text("Historial", style: TextStyle(fontSize: 20)),
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(100, 40),
-                            shape: const StadiumBorder(),
-                            primary: Colors.grey,
-                            onPrimary: Colors.black),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Historial'),
-                                  content: StreamBuilder(
-                                    stream: db
-                                        .collection("usuarios")
-                                        .doc(FirebaseAuth.instance.currentUser!.email.toString())
-                                        .collection("historial")
-                                        .snapshots(),
-                                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                                      if (snapshot.hasError) {
-                                        return const CircularProgressIndicator();
-                                      } else if (snapshot.hasData) {
-                                        return SizedBox(
-                                          height: 400,
-                                          width: 100,
-                                          child: ListView(
-                                              children: snapshot.data!.docs.map((e) {
-                                            DateTime? date = e['fecha'].toDate();
-                                            List<dynamic> graduacion = <dynamic>[];
-                                            if (e['tipo'] == 0) {
-                                              graduacion = List.from(e['graduación']);
-                                            }
-                                            return Card(
-                                              child: e['tipo'] == 0
-                                                  ? ListTile(
-                                                      leading: const Icon(Icons.lens_blur),
-                                                      title: Text("${date!.day}/${date.month}/${date.year}"),
-                                                      subtitle: Text(graduacion.toString()),
-                                                    )
-                                                  : Container(),
-                                            );
-                                          }).toList()),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    },
-                                  ),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Tanca'),
-                                    ),
-                                  ],
-                                );
-                              });
-                        },
-                      ),
-                      TextButton(
-                        child: const Text(
-                          "Continuar",
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(100, 40),
-                            shape: const StadiumBorder(),
-                            primary: Colors.grey,
-                            onPrimary: Colors.black),
-                        onPressed: () {
-                          !widget.fromEditScreen
-                              ? Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const Principal()),
-                                )
-                              : Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  flex: 0),
-              const SizedBox(height: 10),
-            ],
-          ),
+                flex: 0),
+            const SizedBox(height: 10),
+          ],
         ),
       ),
     );

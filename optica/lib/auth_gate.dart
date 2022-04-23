@@ -12,16 +12,25 @@ class AuthGate extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
         if (!snapshot.hasData) {
-          return const MaterialApp(
-            home: SignInScreen(
-              providerConfigs: [
-                EmailProviderConfiguration(),
-              ],
-            ),
-          );
+          return const _AuthenticationApp();
         }
         return app;
       },
+    );
+  }
+}
+
+class _AuthenticationApp extends StatelessWidget {
+  const _AuthenticationApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: SignInScreen(
+        providerConfigs: [
+          EmailProviderConfiguration(),
+        ],
+      ),
     );
   }
 }

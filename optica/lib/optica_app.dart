@@ -9,31 +9,33 @@ class OpticaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).get(),
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return const Center(child: CircularProgressIndicator());
-          case ConnectionState.active:
-            return ErrorWidget("No esperaba un ConnectionState.active al FutureBuilder de l'usuari");
-          case ConnectionState.none:
-            return ErrorWidget("No esperaba un ConnectionState.none al FutureBuilder de l'usuari");
-          case ConnectionState.done:
-            final data = snapshot.data!;
-            if (!data.exists) {
-              FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).set({
-                'codigo': "",
-                'llevaLentillas': false,
-                'nivel_recompensa': 1,
-                'nombre': "",
-              });
-              return const FirstConnection();
-            } else {
-              return const Principal();
-            }
-        }
-      },
+    return MaterialApp(
+      home: FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        future: FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).get(),
+        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.active:
+              return ErrorWidget("No esperaba un ConnectionState.active al FutureBuilder de l'usuari");
+            case ConnectionState.none:
+              return ErrorWidget("No esperaba un ConnectionState.none al FutureBuilder de l'usuari");
+            case ConnectionState.done:
+              final data = snapshot.data!;
+              if (!data.exists) {
+                FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).set({
+                  'codigo': "",
+                  'llevaLentillas': false,
+                  'nivel_recompensa': 1,
+                  'nombre': "",
+                });
+                return const FirstConnection();
+              } else {
+                return const Principal();
+              }
+          }
+        },
+      ),
     );
   }
 }
