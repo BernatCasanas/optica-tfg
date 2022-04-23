@@ -7,15 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:optica/screens/principal.dart';
 import 'package:optica/widgets/big_text.dart';
 
-enum HISTORIAL { GRADUACIO, POSAR, TREURE, ESTOIG, BLISTER, SOLUCIO }
+enum Historial { graduacio, posar, treure, estoig, blister, solucio }
 
-class Configuration2 extends StatefulWidget {
-  const Configuration2({Key? key, required this.fromEditScreen}) : super(key: key);
+class Configura2Graduacio extends StatefulWidget {
+  const Configura2Graduacio({Key? key, required this.fromEditScreen}) : super(key: key);
 
   final bool fromEditScreen;
 
   @override
-  State<Configuration2> createState() => _Configuration2State();
+  State<Configura2Graduacio> createState() => _Configura2GraduacioState();
 }
 
 final controller1_1 = TextEditingController();
@@ -40,7 +40,7 @@ List<TextEditingController> controllers = [
 
 bool error = false;
 
-class _Configuration2State extends State<Configuration2> {
+class _Configura2GraduacioState extends State<Configura2Graduacio> {
   DateTime? _dateTime;
   FirebaseFirestore db = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser!;
@@ -134,7 +134,7 @@ class _Configuration2State extends State<Configuration2> {
                           .collection("usuarios")
                           .doc(currentUser.email.toString())
                           .collection("historial")
-                          .add({'fecha': _dateTime, 'tipo': HISTORIAL.GRADUACIO.index, 'graduación': graduation});
+                          .add({'fecha': _dateTime, 'tipo': Historial.graduacio.index, 'graduación': graduation});
                       controller1_1.text = controller1_2.text = controller1_3.text = controller1_4.text =
                           controller2_1.text = controller2_2.text = controller2_3.text = controller2_4.text = "";
                     },

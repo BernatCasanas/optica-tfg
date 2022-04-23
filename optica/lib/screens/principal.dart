@@ -2,9 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/screens/configura1_lents.dart';
+import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:table_calendar/table_calendar.dart';
-
-import 'configuration_2.dart';
 
 final pages = <Widget>[
   const Alertes(),
@@ -80,7 +79,7 @@ class _PrincipalState extends State<Principal> {
                                           .doc(FirebaseAuth.instance.currentUser?.email)
                                           .collection("historial")
                                           .add({
-                                        'tipo': !wearLents ? HISTORIAL.POSAR.index : HISTORIAL.TREURE.index,
+                                        'tipo': !wearLents ? Historial.posar.index : Historial.treure.index,
                                         'fecha': DateTime.now(),
                                       });
                                       if (!wearLents) {
@@ -722,7 +721,7 @@ class Editar extends StatelessWidget {
                                         .doc(FirebaseAuth.instance.currentUser?.email)
                                         .update({'duración_diaria': int.parse(controller1.text)});
                                     dir2.add({
-                                      'tipo': HISTORIAL.BLISTER.index,
+                                      'tipo': Historial.blister.index,
                                       'fecha': DateTime.now(),
                                     });
                                     break;
@@ -732,7 +731,7 @@ class Editar extends StatelessWidget {
                                       'tiempo': today.add(const Duration(days: 60)),
                                     });
                                     dir2.add({
-                                      'tipo': HISTORIAL.SOLUCIO.index,
+                                      'tipo': Historial.solucio.index,
                                       'fecha': DateTime.now(),
                                     });
                                     break;
@@ -742,7 +741,7 @@ class Editar extends StatelessWidget {
                                       'tiempo': today.add(const Duration(days: 90)),
                                     });
                                     dir2.add({
-                                      'tipo': HISTORIAL.ESTOIG.index,
+                                      'tipo': Historial.estoig.index,
                                       'fecha': DateTime.now(),
                                     });
                                     break;
@@ -759,7 +758,7 @@ class Editar extends StatelessWidget {
                   if (index == 3) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Configuration2(fromEditScreen: true)),
+                      MaterialPageRoute(builder: (context) => const Configura2Graduacio(fromEditScreen: true)),
                     );
                   }
                 },

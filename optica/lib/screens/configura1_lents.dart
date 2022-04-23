@@ -4,10 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:optica/widgets/big_text.dart';
 import 'package:optica/widgets/small_text.dart';
-
-import 'configuration_2.dart';
 
 enum Avisos { lents, estoig, solucio, revisio, personalitzat }
 
@@ -143,7 +142,7 @@ class _Configura1LentsState extends State<Configura1Lents> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Configuration2(fromEditScreen: false)),
+                      MaterialPageRoute(builder: (context) => const Configura2Graduacio(fromEditScreen: false)),
                     );
                   },
                 ),
