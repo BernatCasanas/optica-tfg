@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/user.dart';
-import 'package:optica/screens/configura1_lents.dart';
 import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -19,8 +18,6 @@ const List<Page> pages = [
   Page("Editar", Editar()),
 ];
 
-DateTime? _date = DateTime.now();
-TimeOfDay? _time = TimeOfDay.now();
 TextEditingController person = TextEditingController();
 
 int indexPage = 0;
@@ -177,6 +174,9 @@ class Alertes extends StatefulWidget {
 }
 
 class _AlertesState extends State<Alertes> {
+  DateTime? _date = DateTime.now();
+  TimeOfDay? _time = TimeOfDay.now();
+
   @override
   Widget build(BuildContext context) {
     FirebaseFirestore db = FirebaseFirestore.instance;
