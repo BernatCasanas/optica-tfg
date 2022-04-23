@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/alertes.dart';
+import 'package:optica/utils/dates.dart';
 
 class Alertes extends StatefulWidget {
   const Alertes({Key? key}) : super(key: key);
@@ -76,13 +77,7 @@ class _AlertesState extends State<Alertes> {
                                     title: !justName
                                         ? Text("Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
                                         : Text(title),
-                                    subtitle: Text(alerta.tiempo.difference(DateTime.now()).inDays > 1
-                                        ? "Queden ${alerta.tiempo.difference(DateTime.now()).inDays.toString()} dies"
-                                        : alerta.tiempo.difference(DateTime.now()).inHours > 0
-                                            ? "Queden ${alerta.tiempo.difference(DateTime.now()).inHours.toString()} hores"
-                                            : alerta.tiempo.difference(DateTime.now()).inMinutes > 0
-                                                ? "Queden ${alerta.tiempo.difference(DateTime.now()).inMinutes.toString()} minuts"
-                                                : "Ha vençut"),
+                                    subtitle: Text(tempsRestant(alerta.tiempo)),
                                   ),
                                 ),
                               ],
