@@ -4,11 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:optica/configuration_1.dart';
 import 'package:optica/principal_app.dart';
 
-final TextEditingController controllerNombre = TextEditingController();
-final TextEditingController controllerCodigo = TextEditingController();
-
-bool error = false;
-
 class App extends StatelessWidget {
   const App({Key? key}) : super(key: key);
 
@@ -16,14 +11,17 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       future: FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).get(),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            try {
-              // final data = snapshot.data!.data();
-              // final value = data!['codigo'];
-              return const Principal();
-            } catch (e) {
+      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            return const Center(child: CircularProgressIndicator());
+          case ConnectionState.active:
+            return ErrorWidget("No esperaba un ConnectionState.active al FutureBuilder de l'usuari");
+          case ConnectionState.none:
+            return ErrorWidget("No esperaba un ConnectionState.none al FutureBuilder de l'usuari");
+          case ConnectionState.done:
+            final data = snapshot.data!;
+            if (!data.exists) {
               FirebaseFirestore.instance.collection("usuarios").doc(FirebaseAuth.instance.currentUser?.email).set({
                 'codigo': "",
                 'llevaLentillas': false,
@@ -31,75 +29,104 @@ class App extends StatelessWidget {
                 'nombre': "",
               });
               return const _FirstConnection();
+            } else {
+              return const Principal();
             }
-          }
         }
-
-        return const Center(child: CircularProgressIndicator());
       },
     );
   }
 }
 
 class _FirstConnection extends StatefulWidget {
-  const _FirstConnection({
-    Key? key,
-  }) : super(key: key);
+  const _FirstConnection({Key? key}) : super(key: key);
 
   @override
   State<_FirstConnection> createState() => _FirstConnectionState();
 }
 
 class _FirstConnectionState extends State<_FirstConnection> {
+  TextEditingController controllerCodigo = TextEditingController();
+  TextEditingController controllerNombre = TextEditingController();
+  bool buttonEnabled = false;
+
+  void textChanged() {
+    setState(() {
+      buttonEnabled = (controllerCodigo.text.isNotEmpty && controllerNombre.text.isNotEmpty);
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    controllerCodigo.addListener(textChanged);
+    controllerNombre.addListener(textChanged);
+  }
+
+  @override
+  void dispose() {
+    controllerCodigo.dispose();
+    controllerNombre.dispose();
+    super.dispose();
+  }
+
+  void saveDataAndNextStep() {
+    final userId = FirebaseAuth.instance.currentUser?.email.toString();
+    FirebaseFirestore.instance.collection("usuarios").doc(userId).update({
+      'codigo': controllerCodigo.text,
+      'nombre': controllerNombre.text,
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Configuration1()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: SafeArea(
-          child: Center(
-            child: Column(
+        resizeToAvoidBottomInset: true,
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Spacer(flex: 2),
+            const Expanded(
+              flex: 2,
+              child: BigText(text: "NomApp"),
+            ),
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  _InputBox(name: "Nom", controller: controllerNombre),
+                  const SizedBox(height: 12),
+                  _InputBox(name: "Codi Deontologic", controller: controllerCodigo),
+                ],
+              ),
+            ),
+            const Spacer(),
+            Column(
               children: [
-                Expanded(
-                  flex: 2,
-                  child: Container(),
-                ),
-                const Expanded(
-                  flex: 2,
-                  child: BigText(text: "NomApp"),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: const [
-                      _InputBox(name: "Nom"),
-                      SizedBox(height: 12),
-                      _InputBox(name: "Codi Deontologic"),
-                    ],
+                ElevatedButton(
+                  onPressed: buttonEnabled ? saveDataAndNextStep : null,
+                  child: const Text("Accedeix"),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(200, 50),
+                    shape: const StadiumBorder(),
+                    primary: Colors.grey,
                   ),
                 ),
-                Expanded(
-                  flex: 1,
-                  child: Container(),
-                ),
-                Expanded(
-                  flex: 0,
-                  child: Column(
-                    children: [
-                      const _Button(name: "Accedeix"),
-                      error == true
-                          ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red))
-                          : Container(),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Container(),
-                ),
+                if (error)
+                  const Text(
+                    "Falta omplir dades",
+                    style: TextStyle(color: Colors.red),
+                  )
               ],
             ),
-          ),
+            const Spacer(),
+          ],
         ),
       ),
     );
@@ -140,60 +167,18 @@ class SmallText extends StatelessWidget {
   }
 }
 
-class _Button extends StatefulWidget {
-  final String name;
-  const _Button({
-    Key? key,
-    required this.name,
-  }) : super(key: key);
-
-  @override
-  State<_Button> createState() => _ButtonState();
-}
-
-class _ButtonState extends State<_Button> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          if (controllerCodigo.text == "" || controllerNombre.text == "") {
-            error = true;
-            return;
-          }
-          error = false;
-        });
-        if (error) {
-          return;
-        }
-
-        FirebaseFirestore.instance
-            .collection("usuarios")
-            .doc(FirebaseAuth.instance.currentUser?.email.toString())
-            .update({'codigo': controllerCodigo.text, 'nombre': controllerNombre.text});
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const Configuration1()),
-        );
-      },
-      child: Text(widget.name),
-      style: ElevatedButton.styleFrom(
-          minimumSize: const Size(200, 50), shape: const StadiumBorder(), primary: Colors.grey),
-    );
-  }
-}
-
 class _InputBox extends StatelessWidget {
-  final String name;
   const _InputBox({
     Key? key,
     required this.name,
+    required this.controller,
   }) : super(key: key);
+
+  final String name;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
-    final controller1 = name == "Nom" ? controllerNombre : controllerCodigo;
-
     return Container(
       width: 260,
       padding: const EdgeInsets.all(8),
@@ -205,7 +190,7 @@ class _InputBox extends StatelessWidget {
           SizedBox(
             height: 35,
             child: TextField(
-              controller: controller1,
+              controller: controller,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
