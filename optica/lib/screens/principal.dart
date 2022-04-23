@@ -5,11 +5,11 @@ import 'package:optica/screens/configura1_lents.dart';
 import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-final pages = <Widget>[
-  const Alertes(),
-  const Calendari(),
-  const Ofertes(),
-  const Editar(),
+const pages = <Widget>[
+  Alertes(),
+  Calendari(),
+  Ofertes(),
+  Editar(),
 ];
 
 DateTime? _date = DateTime.now();
@@ -41,95 +41,96 @@ class _PrincipalState extends State<Principal> {
         body: Column(
           children: [
             Expanded(
-                child: Container(
-                  color: Colors.grey[400],
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Align(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            indexPage == 0
-                                ? "Alertes"
-                                : indexPage == 1
-                                    ? "Calendari"
-                                    : indexPage == 2
-                                        ? "Ofertes"
-                                        : "Editar",
-                            style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                          ),
-                          FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                            future: FirebaseFirestore.instance
-                                .collection("usuarios")
-                                .doc(FirebaseAuth.instance.currentUser?.email)
-                                .get(),
-                            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                              if (snapshot.hasData) {
-                                var data = snapshot.data!.data();
-                                wearLents = data['llevaLentillas'];
-                                return TextButton(
-                                    onPressed: () {
+              flex: 3,
+              child: Container(
+                color: Colors.grey[400],
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Align(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          indexPage == 0
+                              ? "Alertes"
+                              : indexPage == 1
+                                  ? "Calendari"
+                                  : indexPage == 2
+                                      ? "Ofertes"
+                                      : "Editar",
+                          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                        ),
+                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                          future: FirebaseFirestore.instance
+                              .collection("usuarios")
+                              .doc(FirebaseAuth.instance.currentUser?.email)
+                              .get(),
+                          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                            if (snapshot.hasData) {
+                              var data = snapshot.data!.data();
+                              wearLents = data['llevaLentillas'];
+                              return TextButton(
+                                  onPressed: () {
+                                    FirebaseFirestore.instance
+                                        .collection("usuarios")
+                                        .doc(FirebaseAuth.instance.currentUser?.email)
+                                        .update({'llevaLentillas': !wearLents});
+                                    FirebaseFirestore.instance
+                                        .collection("usuarios")
+                                        .doc(FirebaseAuth.instance.currentUser?.email)
+                                        .collection("historial")
+                                        .add({
+                                      'tipo': !wearLents ? Historial.posar.index : Historial.treure.index,
+                                      'fecha': DateTime.now(),
+                                    });
+                                    if (!wearLents) {
                                       FirebaseFirestore.instance
                                           .collection("usuarios")
                                           .doc(FirebaseAuth.instance.currentUser?.email)
-                                          .update({'llevaLentillas': !wearLents});
-                                      FirebaseFirestore.instance
-                                          .collection("usuarios")
-                                          .doc(FirebaseAuth.instance.currentUser?.email)
-                                          .collection("historial")
+                                          .collection("avisos")
                                           .add({
-                                        'tipo': !wearLents ? Historial.posar.index : Historial.treure.index,
-                                        'fecha': DateTime.now(),
+                                        'nombre': "Treure les lents",
+                                        'tipo': 4,
+                                        'tiempo': DateTime.now().add(Duration(hours: data['duración_diaria'])),
                                       });
-                                      if (!wearLents) {
-                                        FirebaseFirestore.instance
-                                            .collection("usuarios")
-                                            .doc(FirebaseAuth.instance.currentUser?.email)
-                                            .collection("avisos")
-                                            .add({
-                                          'nombre': "Treure les lents",
-                                          'tipo': 4,
-                                          'tiempo': DateTime.now().add(Duration(hours: data['duración_diaria'])),
-                                        });
-                                      }
-                                      setState(() {
-                                        wearLents = !wearLents;
-                                      });
-                                    },
-                                    child: wearLents ? const Text('Treure Lents') : const Text("Posar Lents"),
-                                    style: ButtonStyle(
-                                        side: MaterialStateProperty.all(const BorderSide(width: 2, color: Colors.grey)),
-                                        foregroundColor: MaterialStateProperty.all(Colors.black),
-                                        padding: MaterialStateProperty.all(
-                                            const EdgeInsets.symmetric(vertical: 10, horizontal: 50)),
-                                        textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 15))));
-                              } else {
-                                return Container();
-                              }
-                            },
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              FirebaseAuth.instance.signOut();
-                            },
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.all(Radius.circular(20)),
-                                color: Colors.grey,
-                              ),
-                              width: 40,
-                              height: 40,
-                              child: const Icon(Icons.logout, color: Colors.black),
+                                    }
+                                    setState(() {
+                                      wearLents = !wearLents;
+                                    });
+                                  },
+                                  child: wearLents ? const Text('Treure Lents') : const Text("Posar Lents"),
+                                  style: ButtonStyle(
+                                      side: MaterialStateProperty.all(const BorderSide(width: 2, color: Colors.grey)),
+                                      foregroundColor: MaterialStateProperty.all(Colors.black),
+                                      padding: MaterialStateProperty.all(
+                                          const EdgeInsets.symmetric(vertical: 10, horizontal: 50)),
+                                      textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 15))));
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            FirebaseAuth.instance.signOut();
+                          },
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(20)),
+                              color: Colors.grey,
                             ),
+                            width: 40,
+                            height: 40,
+                            child: const Icon(Icons.logout, color: Colors.black),
                           ),
-                        ],
-                      ),
-                      alignment: Alignment.bottomLeft,
+                        ),
+                      ],
                     ),
+                    alignment: Alignment.bottomLeft,
                   ),
                 ),
-                flex: 3),
+              ),
+            ),
             Expanded(child: pages[indexPage], flex: 13)
           ],
         ),
