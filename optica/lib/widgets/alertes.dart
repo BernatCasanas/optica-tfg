@@ -149,13 +149,15 @@ class _AlertesState extends State<Alertes> {
                                           hintText: "Nom alerta",
                                         ),
                                       ),
-                                      TextButton(
+                                      ElevatedButton(
                                         child: const Text("Guardar", style: TextStyle(fontSize: 10)),
                                         style: ElevatedButton.styleFrom(
-                                            minimumSize: const Size(100, 40),
-                                            shape: const StadiumBorder(),
-                                            primary: Colors.grey,
-                                            onPrimary: Colors.black),
+                                          minimumSize: const Size(100, 40),
+                                          shape: const StadiumBorder(),
+                                          primary: Colors.grey,
+                                          onPrimary: Colors.black,
+                                          elevation: 0,
+                                        ),
                                         onPressed: () async {
                                           final novaAlerta = Alerta(person.text, _date!, Avisos.personalitzat.index);
                                           await novaAlerta.save();
