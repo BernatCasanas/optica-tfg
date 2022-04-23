@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:optica/configuration_1.dart';
+import 'package:optica/screens/configura1_lents.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'configuration_2.dart';
@@ -260,7 +260,7 @@ class _AlertesState extends State<Alertes> {
                                                     ? const Icon(Icons.record_voice_over_sharp)
                                                     : const Icon(Icons.star),
                                     title: !justName
-                                        ? Text("Canviar ${AVISOS.values.elementAt(e['tipo']).name.toLowerCase()}")
+                                        ? Text("Canviar ${Avisos.values.elementAt(e['tipo']).name.toLowerCase()}")
                                         : Text(title),
                                     subtitle: Text(e['tiempo'].toDate().difference(DateTime.now()).inDays > 1
                                         ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inDays.toString()} dies"
@@ -359,7 +359,7 @@ class _AlertesState extends State<Alertes> {
                                               .add({
                                             'tiempo': DateTime(
                                                 _date!.year, _date!.month, _date!.day, _time!.hour, _time!.minute),
-                                            'tipo': AVISOS.PERSONALITZAT.index,
+                                            'tipo': Avisos.personalitzat.index,
                                             'nombre': person.text,
                                           });
                                         },
@@ -714,7 +714,7 @@ class Editar extends StatelessWidget {
                                 switch (index) {
                                   case 0:
                                     dir.add({
-                                      'tipo': AVISOS.LENTS.index,
+                                      'tipo': Avisos.lents.index,
                                       'tiempo': today.add(Duration(days: int.parse(controller.text))),
                                     });
                                     FirebaseFirestore.instance
@@ -728,7 +728,7 @@ class Editar extends StatelessWidget {
                                     break;
                                   case 1:
                                     dir.add({
-                                      'tipo': AVISOS.SOLUCIO.index,
+                                      'tipo': Avisos.solucio.index,
                                       'tiempo': today.add(const Duration(days: 60)),
                                     });
                                     dir2.add({
@@ -738,7 +738,7 @@ class Editar extends StatelessWidget {
                                     break;
                                   case 2:
                                     dir.add({
-                                      'tipo': AVISOS.ESTOIG.index,
+                                      'tipo': Avisos.estoig.index,
                                       'tiempo': today.add(const Duration(days: 90)),
                                     });
                                     dir2.add({

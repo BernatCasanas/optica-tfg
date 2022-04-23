@@ -9,21 +9,21 @@ import 'package:optica/widgets/small_text.dart';
 
 import 'configuration_2.dart';
 
-enum AVISOS { LENTS, ESTOIG, SOLUCIO, REVISIO, PERSONALITZAT }
+enum Avisos { lents, estoig, solucio, revisio, personalitzat }
 
 final controllerLents = TextEditingController();
 final controllerDuracio = TextEditingController();
 
 bool error = false;
 
-class Configuration1 extends StatefulWidget {
-  const Configuration1({Key? key}) : super(key: key);
+class Configura1Lents extends StatefulWidget {
+  const Configura1Lents({Key? key}) : super(key: key);
 
   @override
-  State<Configuration1> createState() => _Configuration1State();
+  State<Configura1Lents> createState() => _Configura1LentsState();
 }
 
-class _Configuration1State extends State<Configuration1> {
+class _Configura1LentsState extends State<Configura1Lents> {
   DateTime? _dateTime;
 
   @override
@@ -120,19 +120,19 @@ class _Configuration1State extends State<Configuration1> {
                     var today = DateTime.now();
 
                     db.add({
-                      'tipo': AVISOS.ESTOIG.index,
+                      'tipo': Avisos.estoig.index,
                       'tiempo': today.add(const Duration(days: 90)),
                     });
                     db.add({
-                      'tipo': AVISOS.LENTS.index,
+                      'tipo': Avisos.lents.index,
                       'tiempo': today.add(Duration(days: int.parse(controllerLents.text))),
                     });
                     db.add({
-                      'tipo': AVISOS.SOLUCIO.index,
+                      'tipo': Avisos.solucio.index,
                       'tiempo': today.add(const Duration(days: 60)),
                     });
                     db.add({
-                      'tipo': AVISOS.REVISIO.index,
+                      'tipo': Avisos.revisio.index,
                       'tiempo': today.add(_dateTime!.difference(DateTime.now())),
                     });
 

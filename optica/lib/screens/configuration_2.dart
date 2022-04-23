@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:optica/principal.dart';
+import 'package:optica/screens/principal.dart';
 import 'package:optica/widgets/big_text.dart';
 
 enum HISTORIAL { GRADUACIO, POSAR, TREURE, ESTOIG, BLISTER, SOLUCIO }

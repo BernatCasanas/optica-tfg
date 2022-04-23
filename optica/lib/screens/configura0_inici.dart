@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:optica/configuration_1.dart';
+import 'package:optica/screens/configura1_lents.dart';
 import 'package:optica/widgets/big_text.dart';
 
-class FirstConnection extends StatefulWidget {
-  const FirstConnection({Key? key}) : super(key: key);
+class Configura0Inici extends StatefulWidget {
+  const Configura0Inici({Key? key}) : super(key: key);
 
   @override
-  State<FirstConnection> createState() => _FirstConnectionState();
+  State<Configura0Inici> createState() => _Configura0IniciState();
 }
 
-class _FirstConnectionState extends State<FirstConnection> {
+class _Configura0IniciState extends State<Configura0Inici> {
   TextEditingController controllerCodigo = TextEditingController();
   TextEditingController controllerNombre = TextEditingController();
   bool buttonEnabled = false;
@@ -44,7 +44,7 @@ class _FirstConnectionState extends State<FirstConnection> {
     });
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const Configuration1()),
+      MaterialPageRoute(builder: (context) => const Configura1Lents()),
     );
   }
 
