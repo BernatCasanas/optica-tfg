@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/model/alertes.dart';
 import 'package:optica/model/user.dart';
 import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -185,29 +186,24 @@ class _AlertesState extends State<Alertes> {
         Expanded(
           flex: 9,
           child: StreamBuilder(
-              stream: db
-                  .collection("usuarios")
-                  .doc(FirebaseAuth.instance.currentUser!.email.toString())
-                  .collection("avisos")
-                  .orderBy('tiempo')
-                  .snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              stream: getUserAlerts(),
+              builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
                       const SizedBox(height: 10),
                       Expanded(
                         child: ListView(
-                          children: snapshot.data!.docs.map<Widget>((e) {
+                          children: snapshot.data!.map<Widget>((alerta) {
                             bool justName = false;
                             String title = "";
-                            if (e['tipo'] == 3) {
+                            if (alerta.tipo == 3) {
                               justName = true;
                               title = "Revisió";
                             }
-                            if (e['tipo'] == 4) {
+                            if (alerta.tipo == 4) {
                               justName = true;
-                              title = e['nombre'];
+                              title = alerta.nombre;
                             }
                             return Column(
                               children: [
@@ -225,29 +221,29 @@ class _AlertesState extends State<Alertes> {
                                                 .collection("usuarios")
                                                 .doc(FirebaseAuth.instance.currentUser?.email)
                                                 .collection("avisos")
-                                                .doc(e.id)
+                                                .doc(alerta.id)
                                                 .delete();
                                           });
                                         },
                                         child: const Icon(Icons.close, color: Colors.black)),
-                                    leading: e['tipo'] == 0
+                                    leading: alerta.tipo == 0
                                         ? const Icon(Icons.remove_red_eye)
-                                        : e['tipo'] == 1
+                                        : alerta.tipo == 1
                                             ? const Icon(Icons.camera_sharp)
-                                            : e['tipo'] == 2
+                                            : alerta.tipo == 2
                                                 ? const Icon(Icons.water)
-                                                : e['tipo'] == 3
+                                                : alerta.tipo == 3
                                                     ? const Icon(Icons.record_voice_over_sharp)
                                                     : const Icon(Icons.star),
                                     title: !justName
-                                        ? Text("Canviar ${Avisos.values.elementAt(e['tipo']).name.toLowerCase()}")
+                                        ? Text("Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
                                         : Text(title),
-                                    subtitle: Text(e['tiempo'].toDate().difference(DateTime.now()).inDays > 1
-                                        ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inDays.toString()} dies"
-                                        : e['tiempo'].toDate().difference(DateTime.now()).inHours > 0
-                                            ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inHours.toString()} hores"
-                                            : e['tiempo'].toDate().difference(DateTime.now()).inMinutes > 0
-                                                ? "Queden ${e['tiempo'].toDate().difference(DateTime.now()).inMinutes.toString()} minuts"
+                                    subtitle: Text(alerta.tiempo.difference(DateTime.now()).inDays > 1
+                                        ? "Queden ${alerta.tiempo.difference(DateTime.now()).inDays.toString()} dies"
+                                        : alerta.tiempo.difference(DateTime.now()).inHours > 0
+                                            ? "Queden ${alerta.tiempo.difference(DateTime.now()).inHours.toString()} hores"
+                                            : alerta.tiempo.difference(DateTime.now()).inMinutes > 0
+                                                ? "Queden ${alerta.tiempo.difference(DateTime.now()).inMinutes.toString()} minuts"
                                                 : "Ha vençut"),
                                   ),
                                 ),
