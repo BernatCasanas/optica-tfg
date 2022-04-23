@@ -1,15 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/model/user.dart';
 import 'package:optica/screens/configura1_lents.dart';
 import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-const pages = <Widget>[
-  Alertes(),
-  Calendari(),
-  Ofertes(),
-  Editar(),
+class Page {
+  final Widget widget;
+  final String name;
+  const Page(this.name, this.widget);
+}
+
+const List<Page> pages = [
+  Page("Alertes", Alertes()),
+  Page("Calendari", Calendari()),
+  Page("Ofertes", Ofertes()),
+  Page("Editar", Editar()),
 ];
 
 DateTime? _date = DateTime.now();
@@ -17,8 +24,6 @@ TimeOfDay? _time = TimeOfDay.now();
 TextEditingController person = TextEditingController();
 
 int indexPage = 0;
-
-bool wearLents = false;
 
 class Principal extends StatefulWidget {
   const Principal({Key? key}) : super(key: key);
@@ -34,106 +39,75 @@ class _PrincipalState extends State<Principal> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        bottomNavigationBar: _NavigatorBar(notifyParent: refresh),
-        body: Column(
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                color: Colors.grey[400],
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Align(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          indexPage == 0
-                              ? "Alertes"
-                              : indexPage == 1
-                                  ? "Calendari"
-                                  : indexPage == 2
-                                      ? "Ofertes"
-                                      : "Editar",
-                          style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                        ),
-                        FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                          future: FirebaseFirestore.instance
-                              .collection("usuarios")
-                              .doc(FirebaseAuth.instance.currentUser?.email)
-                              .get(),
-                          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                            if (snapshot.hasData) {
-                              var data = snapshot.data!.data();
-                              wearLents = data['llevaLentillas'];
-                              return TextButton(
-                                  onPressed: () {
-                                    FirebaseFirestore.instance
-                                        .collection("usuarios")
-                                        .doc(FirebaseAuth.instance.currentUser?.email)
-                                        .update({'llevaLentillas': !wearLents});
-                                    FirebaseFirestore.instance
-                                        .collection("usuarios")
-                                        .doc(FirebaseAuth.instance.currentUser?.email)
-                                        .collection("historial")
-                                        .add({
-                                      'tipo': !wearLents ? Historial.posar.index : Historial.treure.index,
-                                      'fecha': DateTime.now(),
-                                    });
-                                    if (!wearLents) {
-                                      FirebaseFirestore.instance
-                                          .collection("usuarios")
-                                          .doc(FirebaseAuth.instance.currentUser?.email)
-                                          .collection("avisos")
-                                          .add({
-                                        'nombre': "Treure les lents",
-                                        'tipo': 4,
-                                        'tiempo': DateTime.now().add(Duration(hours: data['duración_diaria'])),
-                                      });
-                                    }
-                                    setState(() {
-                                      wearLents = !wearLents;
-                                    });
-                                  },
-                                  child: wearLents ? const Text('Treure Lents') : const Text("Posar Lents"),
-                                  style: ButtonStyle(
-                                      side: MaterialStateProperty.all(const BorderSide(width: 2, color: Colors.grey)),
-                                      foregroundColor: MaterialStateProperty.all(Colors.black),
-                                      padding: MaterialStateProperty.all(
-                                          const EdgeInsets.symmetric(vertical: 10, horizontal: 50)),
-                                      textStyle: MaterialStateProperty.all(const TextStyle(fontSize: 15))));
-                            } else {
-                              return Container();
-                            }
-                          },
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            FirebaseAuth.instance.signOut();
-                          },
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(Radius.circular(20)),
-                              color: Colors.grey,
-                            ),
-                            width: 40,
-                            height: 40,
-                            child: const Icon(Icons.logout, color: Colors.black),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: _NavigatorBar(notifyParent: refresh),
+      body: Column(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Container(
+              color: Colors.grey[400],
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Align(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        pages[indexPage].name,
+                        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      StreamBuilder<Usuari>(
+                        stream: currentUserStream(),
+                        builder: (BuildContext context, AsyncSnapshot<Usuari> snapshot) {
+                          switch (snapshot.connectionState) {
+                            case ConnectionState.none:
+                              throw ErrorWidget("Estat 'none' al StreamBuilder de l'usuari");
+                            case ConnectionState.waiting:
+                              return const Center(child: CircularProgressIndicator());
+                            case ConnectionState.done:
+                              return ErrorWidget("L'Stream de l'usuari s'ha acabat! No hauria...");
+                            case ConnectionState.active:
+                              var usuari = snapshot.data!;
+                              return ElevatedButton(
+                                onPressed: () => usuari.toggleContactLenses(),
+                                child: Text(
+                                  usuari.portaLentilles ? 'Treure Lents' : "Posar Lents",
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  textStyle: const TextStyle(fontSize: 15),
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                                ),
+                              );
+                          }
+                        },
+                      ),
+                      TextButton(
+                        onPressed: FirebaseAuth.instance.signOut,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(20)),
+                            color: Colors.grey,
                           ),
+                          width: 40,
+                          height: 40,
+                          child: const Icon(Icons.logout, color: Colors.black),
                         ),
-                      ],
-                    ),
-                    alignment: Alignment.bottomLeft,
+                      ),
+                    ],
                   ),
+                  alignment: Alignment.bottomLeft,
                 ),
               ),
             ),
-            Expanded(child: pages[indexPage], flex: 13)
-          ],
-        ),
+          ),
+          Expanded(
+            flex: 13,
+            child: pages[indexPage].widget,
+          )
+        ],
       ),
     );
   }
@@ -146,43 +120,50 @@ class _NavigatorBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        child: SizedBox(
-          height: 56,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  child: IconButton(
-                      icon: const Icon(Icons.notifications),
-                      onPressed: () {
-                        indexPage = 0;
-                        notifyParent();
-                      })),
-              IconButton(
-                  icon: const Icon(Icons.calendar_today_rounded),
-                  onPressed: () {
-                    indexPage = 1;
-                    notifyParent();
-                  }),
-              IconButton(
-                  icon: const Icon(Icons.shopping_bag),
-                  onPressed: () {
-                    indexPage = 2;
-                    notifyParent();
-                  }),
-              Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  child: IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        indexPage = 3;
-                        notifyParent();
-                      })),
-            ],
-          ),
-        ));
+      shape: const CircularNotchedRectangle(),
+      child: SizedBox(
+        height: 56,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              margin: const EdgeInsets.only(left: 20),
+              child: IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  indexPage = 0;
+                  notifyParent();
+                },
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.calendar_today_rounded),
+              onPressed: () {
+                indexPage = 1;
+                notifyParent();
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.shopping_bag),
+              onPressed: () {
+                indexPage = 2;
+                notifyParent();
+              },
+            ),
+            Container(
+              margin: const EdgeInsets.only(right: 20),
+              child: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {
+                  indexPage = 3;
+                  notifyParent();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -279,7 +260,9 @@ class _AlertesState extends State<Alertes> {
                     ],
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
               }),
         ),

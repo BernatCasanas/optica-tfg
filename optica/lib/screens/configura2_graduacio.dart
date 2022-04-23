@@ -4,10 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:optica/model/user.dart';
 import 'package:optica/screens/principal.dart';
 import 'package:optica/widgets/big_text.dart';
-
-enum Historial { graduacio, posar, treure, estoig, blister, solucio }
 
 class Configura2Graduacio extends StatefulWidget {
   const Configura2Graduacio({Key? key, required this.fromEditScreen}) : super(key: key);

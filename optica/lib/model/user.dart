@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+enum Historial { graduacio, posar, treure, estoig, blister, solucio }
+
 class Usuari {
-  String codi;
-  String nomComplet;
-  int? duracioDiaria;
+  String codi, nomComplet;
+  int duracioDiaria;
   bool portaLentilles;
   int nivellRecompensa;
 
@@ -14,6 +15,23 @@ class Usuari {
         duracioDiaria = data['duración_diaria'],
         portaLentilles = data['llevaLentillas'],
         nivellRecompensa = data['nivel_recompensa'];
+
+  Future<void> toggleContactLenses() async {
+    portaLentilles = !portaLentilles;
+    final userRef = getCurrentUserRef();
+    userRef.update({'llevaLentillas': portaLentilles});
+    userRef.collection("historial").add({
+      'tipo': portaLentilles ? Historial.posar.index : Historial.treure.index,
+      'fecha': DateTime.now(),
+    });
+    if (portaLentilles) {
+      userRef.collection("avisos").add({
+        'nombre': "Treure les lents",
+        'tipo': 4,
+        'tiempo': DateTime.now().add(Duration(hours: duracioDiaria)),
+      });
+    }
+  }
 }
 
 String getCurrentUserId() {
@@ -24,9 +42,13 @@ String getCurrentUserId() {
   return user.email!;
 }
 
-Future<Usuari?> getCurrentUser() async {
+DocumentReference<Map<String, dynamic>> getCurrentUserRef() {
   String userId = getCurrentUserId();
-  final userRef = FirebaseFirestore.instance.collection("usuarios").doc(userId);
+  return FirebaseFirestore.instance.collection("usuarios").doc(userId);
+}
+
+Future<Usuari?> maybeGetCurrentUser() async {
+  final userRef = getCurrentUserRef();
   final doc = await userRef.get();
   if (!doc.exists) {
     return null;
@@ -35,9 +57,10 @@ Future<Usuari?> getCurrentUser() async {
   }
 }
 
+Stream<Usuari> currentUserStream() => getCurrentUserRef().snapshots().map((doc) => Usuari.fromFirestore(doc.data()!));
+
 Future<void> initializeUserData() async {
-  final userId = getCurrentUserId();
-  await FirebaseFirestore.instance.collection("usuarios").doc(userId).set({
+  return getCurrentUserRef().set({
     'codigo': "",
     'llevaLentillas': false,
     'nivel_recompensa': 1,
