@@ -8,6 +8,8 @@ class Alerta {
   late DateTime tiempo;
   late int tipo;
 
+  Alerta(this.nombre, this.tiempo, this.tipo) : id = "";
+
   Alerta.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> docSnap) {
     id = docSnap.id;
     final data = docSnap.data()!;
@@ -16,8 +18,24 @@ class Alerta {
     tipo = data['tipo'];
   }
 
+  Map<String, dynamic> data() => {
+        'nombre': nombre,
+        'tiempo': Timestamp.fromDate(tiempo),
+        'tipo': tipo,
+      };
+
   void delete() {
     getUserRef().collection("avisos").doc(id).delete();
+  }
+
+  Future<void> save() async {
+    final alertsRef = getUserRef().collection("avisos");
+    if (id.isEmpty) {
+      final doc = await alertsRef.add(data());
+      id = doc.id;
+    } else {
+      await alertsRef.doc(id).update(data());
+    }
   }
 }
 
@@ -27,3 +45,17 @@ Stream<List<Alerta>> getUserAlerts() async* {
     yield docList.docs.map((doc) => Alerta.fromDocumentSnapshot(doc)).toList();
   }
 }
+
+/*
+
+db
+                                              .collection("usuarios")
+                                              .doc(FirebaseAuth.instance.currentUser?.email.toString())
+                                              .collection("avisos")
+                                              .add({
+                                            'tiempo': DateTime(
+                                                _date!.year, _date!.month, _date!.day, _time!.hour, _time!.minute),
+                                            'tipo': Avisos.personalitzat.index,
+                                            'nombre': person.text,
+                                          });
+                                          */

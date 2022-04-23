@@ -156,17 +156,9 @@ class _AlertesState extends State<Alertes> {
                                             shape: const StadiumBorder(),
                                             primary: Colors.grey,
                                             onPrimary: Colors.black),
-                                        onPressed: () {
-                                          db
-                                              .collection("usuarios")
-                                              .doc(FirebaseAuth.instance.currentUser?.email.toString())
-                                              .collection("avisos")
-                                              .add({
-                                            'tiempo': DateTime(
-                                                _date!.year, _date!.month, _date!.day, _time!.hour, _time!.minute),
-                                            'tipo': Avisos.personalitzat.index,
-                                            'nombre': person.text,
-                                          });
+                                        onPressed: () async {
+                                          final novaAlerta = Alerta(person.text, _date!, Avisos.personalitzat.index);
+                                          await novaAlerta.save();
                                         },
                                       ),
                                     ],
