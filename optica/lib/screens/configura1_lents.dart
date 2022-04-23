@@ -4,11 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:optica/model/user.dart';
 import 'package:optica/screens/configura2_graduacio.dart';
 import 'package:optica/widgets/big_text.dart';
 import 'package:optica/widgets/small_text.dart';
-
-enum Avisos { lents, estoig, solucio, revisio, personalitzat }
 
 final controllerLents = TextEditingController();
 final controllerDuracio = TextEditingController();
