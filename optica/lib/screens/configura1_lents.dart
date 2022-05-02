@@ -10,7 +10,9 @@ import 'package:optica/widgets/big_text.dart';
 import 'package:optica/widgets/small_text.dart';
 
 final controllerLents = TextEditingController();
-final controllerDuracio = TextEditingController();
+final controllerLentsDuracio = TextEditingController();
+final controllerEstiogDuracio = TextEditingController();
+final controllerSolucioDuracio = TextEditingController();
 
 bool error = false;
 
@@ -30,7 +32,6 @@ class _Configura1LentsState extends State<Configura1Lents> {
       resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(children: [
-          //Total flex = 12
           Expanded(
             flex: 1,
             child: Container(),
@@ -43,19 +44,53 @@ class _Configura1LentsState extends State<Configura1Lents> {
             child: Container(),
           ),
           Expanded(
-            flex: 2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            flex: 3,
+            child: Column(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [const SmallText(text: "Lents"), MainInput(text: "Vida útil", controller: controllerLents)],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const SmallText(text: "Duració Lents"),
-                    MainInput(text: "Temps diari", controller: controllerDuracio)
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SmallText(text: "Lents"),
+                        MainInput(
+                            text: "Vida útil", controller: controllerLents)
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SmallText(text: "Duració Lents"),
+                        MainInput(
+                            text: "Temps diari",
+                            controller: controllerLentsDuracio)
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SmallText(text: "Duració Estoig"),
+                        MainInput(
+                            text: "Vida útil",
+                            controller: controllerEstiogDuracio)
+                      ],
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SmallText(text: "Duració Solució"),
+                        MainInput(
+                            text: "Vida útil",
+                            controller: controllerSolucioDuracio)
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -63,10 +98,13 @@ class _Configura1LentsState extends State<Configura1Lents> {
           ),
           Expanded(
             flex: 3,
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SmallText(text: "Revisió"),
               TextButton(
-                child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                child: Text(_dateTime == null
+                    ? "Tria una data"
+                    : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 40),
                     shape: const StadiumBorder(),
@@ -92,7 +130,8 @@ class _Configura1LentsState extends State<Configura1Lents> {
             child: Column(
               children: [
                 TextButton(
-                  child: const Text("Continuar", style: TextStyle(fontSize: 10)),
+                  child:
+                      const Text("Continuar", style: TextStyle(fontSize: 10)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       shape: const StadiumBorder(),
@@ -100,7 +139,11 @@ class _Configura1LentsState extends State<Configura1Lents> {
                       onPrimary: Colors.black),
                   onPressed: () {
                     setState(() {
-                      if (controllerDuracio.text == "" || controllerLents.text == "" || _dateTime == null) {
+                      if (controllerLentsDuracio.text == "" ||
+                          controllerLents.text == "" ||
+                          controllerSolucioDuracio.text == "" ||
+                          controllerEstiogDuracio.text == "" ||
+                          _dateTime == null) {
                         error = true;
                         return;
                       }
@@ -123,7 +166,8 @@ class _Configura1LentsState extends State<Configura1Lents> {
                     });
                     db.add({
                       'tipo': Avisos.lents.index,
-                      'tiempo': today.add(Duration(days: int.parse(controllerLents.text))),
+                      'tiempo': today
+                          .add(Duration(days: int.parse(controllerLents.text))),
                     });
                     db.add({
                       'tipo': Avisos.solucio.index,
@@ -131,22 +175,30 @@ class _Configura1LentsState extends State<Configura1Lents> {
                     });
                     db.add({
                       'tipo': Avisos.revisio.index,
-                      'tiempo': today.add(_dateTime!.difference(DateTime.now())),
+                      'tiempo':
+                          today.add(_dateTime!.difference(DateTime.now())),
                     });
 
                     FirebaseFirestore.instance
                         .collection("usuarios")
                         .doc(FirebaseAuth.instance.currentUser?.email)
-                        .update({'duración_diaria': int.parse(controllerDuracio.text)});
+                        .update({
+                      'duración_diaria': int.parse(controllerLentsDuracio.text)
+                    });
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Configura2Graduacio(fromEditScreen: false)),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const Configura2Graduacio(fromEditScreen: false)),
                     );
                   },
                 ),
                 const SizedBox(height: 2),
-                error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
+                error == true
+                    ? const Text("Falta omplir dades",
+                        style: TextStyle(color: Colors.red))
+                    : Container(),
               ],
             ),
           ),

@@ -18,7 +18,8 @@ class _Configura0IniciState extends State<Configura0Inici> {
 
   void textChanged() {
     setState(() {
-      buttonEnabled = (controllerCodigo.text.isNotEmpty && controllerNombre.text.isNotEmpty);
+      buttonEnabled = (controllerCodigo.text.isNotEmpty &&
+          controllerNombre.text.isNotEmpty);
     });
   }
 
@@ -51,7 +52,7 @@ class _Configura0IniciState extends State<Configura0Inici> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,7 +68,8 @@ class _Configura0IniciState extends State<Configura0Inici> {
               children: [
                 _InputBox(name: "Nom", controller: controllerNombre),
                 const SizedBox(height: 12),
-                _InputBox(name: "Codi Deontologic", controller: controllerCodigo),
+                _InputBox(
+                    name: "Codi Deontologic", controller: controllerCodigo),
               ],
             ),
           ),

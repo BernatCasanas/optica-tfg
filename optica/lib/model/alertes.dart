@@ -13,9 +13,9 @@ class Alerta {
   Alerta.fromDocumentSnapshot(DocumentSnapshot<Map<String, dynamic>> docSnap) {
     id = docSnap.id;
     final data = docSnap.data()!;
-    nombre = data['nombre'];
-    tiempo = (data['tiempo'] as Timestamp).toDate();
     tipo = data['tipo'];
+    nombre = tipo == Avisos.personalitzat.index ? data['nombre'] : "";
+    tiempo = (data['tiempo'] as Timestamp).toDate();
   }
 
   Map<String, dynamic> data() => {
@@ -40,7 +40,8 @@ class Alerta {
 }
 
 Stream<List<Alerta>> getUserAlerts() async* {
-  final stream = getUserRef().collection("avisos").orderBy('tiempo').snapshots();
+  final stream =
+      getUserRef().collection("avisos").orderBy('tiempo').snapshots();
   await for (final docList in stream) {
     yield docList.docs.map((doc) => Alerta.fromDocumentSnapshot(doc)).toList();
   }

@@ -61,7 +61,8 @@ Future<Usuari?> maybeGetUser() async {
   }
 }
 
-Stream<Usuari> currentUserStream() => getUserRef().snapshots().map((doc) => Usuari.fromFirestore(doc.data()!));
+Stream<Usuari> currentUserStream() =>
+    getUserRef().snapshots().map((doc) => Usuari.fromFirestore(doc.data()!));
 
 Future<void> initializeUserData() async {
   return getUserRef().set({

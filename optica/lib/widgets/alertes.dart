@@ -31,7 +31,8 @@ class _AlertesState extends State<Alertes> {
           flex: 9,
           child: StreamBuilder(
               stream: getUserAlerts(),
-              builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
                 if (snapshot.hasData) {
                   return Column(
                     children: [
@@ -56,16 +57,19 @@ class _AlertesState extends State<Alertes> {
                                   width: 350,
                                   decoration: BoxDecoration(
                                     color: Colors.grey[300],
-                                    borderRadius: const BorderRadius.all(Radius.circular(20)),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(20)),
                                   ),
                                   child: ListTile(
                                     trailing: TextButton(
                                       onPressed: () => alerta.delete(),
-                                      child: const Icon(Icons.close, color: Colors.black),
+                                      child: const Icon(Icons.close,
+                                          color: Colors.black),
                                     ),
                                     leading: iconaAlerta[alerta.tipo],
                                     title: !justName
-                                        ? Text("Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
+                                        ? Text(
+                                            "Canviar ${Avisos.values.elementAt(alerta.tipo).name.toLowerCase()}")
                                         : Text(title),
                                     subtitle: Text(tempsRestant(alerta.tiempo)),
                                   ),
@@ -95,7 +99,8 @@ class _AlertesState extends State<Alertes> {
                     title: const Text('Alterta Personalitzada'),
                     content: StreamBuilder(
                       stream: getUserAlerts(),
-                      builder: (BuildContext context, AsyncSnapshot<List<Alerta>> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<Alerta>> snapshot) {
                         if (snapshot.hasError) {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasData) {
@@ -106,13 +111,15 @@ class _AlertesState extends State<Alertes> {
                                 child: Column(
                                   children: [
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         TextButton(
                                           onPressed: () {
                                             showDatePicker(
                                               context: context,
-                                              initialDate: DateTime.now().add(const Duration(seconds: 1)),
+                                              initialDate: DateTime.now().add(
+                                                  const Duration(seconds: 1)),
                                               firstDate: DateTime.now(),
                                               lastDate: DateTime(2100),
                                             ).then((value) {
@@ -121,19 +128,23 @@ class _AlertesState extends State<Alertes> {
                                               });
                                             });
                                           },
-                                          child: Text("${_date!.day}/${_date!.month}/${_date!.year}"),
+                                          child: Text(
+                                              "${_date!.day}/${_date!.month}/${_date!.year}"),
                                         ),
                                         TextButton(
                                           onPressed: () {
                                             showTimePicker(
                                               context: context,
-                                              initialTime:
-                                                  TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute),
+                                              initialTime: TimeOfDay(
+                                                  hour: DateTime.now().hour,
+                                                  minute:
+                                                      DateTime.now().minute),
                                             ).then((value) {
                                               _time = value;
                                             });
                                           },
-                                          child: Text("${_time!.hour}:${_time!.minute}"),
+                                          child: Text(
+                                              "${_time!.hour}:${_time!.minute}"),
                                         ),
                                       ],
                                     ),
@@ -147,7 +158,8 @@ class _AlertesState extends State<Alertes> {
                                       ),
                                     ),
                                     ElevatedButton(
-                                      child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                                      child: const Text("Guardar",
+                                          style: TextStyle(fontSize: 10)),
                                       style: ElevatedButton.styleFrom(
                                         minimumSize: const Size(100, 40),
                                         shape: const StadiumBorder(),
@@ -156,7 +168,8 @@ class _AlertesState extends State<Alertes> {
                                         elevation: 0,
                                       ),
                                       onPressed: () async {
-                                        final novaAlerta = Alerta(person.text, _date!, Avisos.personalitzat.index);
+                                        final novaAlerta = Alerta(person.text,
+                                            _date!, Avisos.personalitzat.index);
                                         await novaAlerta.save();
                                       },
                                     ),
