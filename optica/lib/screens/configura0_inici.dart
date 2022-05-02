@@ -42,6 +42,7 @@ class _Configura0IniciState extends State<Configura0Inici> {
     FirebaseFirestore.instance.collection("usuarios").doc(userId).update({
       'codigo': controllerCodigo.text,
       'nombre': controllerNombre.text,
+      'puntos': 10,
     });
     Navigator.push(
       context,

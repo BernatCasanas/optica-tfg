@@ -1,10 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:optica/model/user.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
-class Ofertes extends StatelessWidget {
+class Ofertes extends StatefulWidget {
   const Ofertes({Key? key}) : super(key: key);
 
+  @override
+  State<Ofertes> createState() => _OfertesState();
+}
+
+class _OfertesState extends State<Ofertes> {
   @override
   Widget build(BuildContext context) {
     List<Color> level = [
@@ -15,6 +22,7 @@ class Ofertes extends StatelessWidget {
       Colors.greenAccent,
       Colors.green,
     ];
+
     return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       future: FirebaseFirestore.instance
           .collection("usuarios")
@@ -26,6 +34,7 @@ class Ofertes extends StatelessWidget {
         if (snapshot.hasData) {
           var data = snapshot.data!.data();
           var value = data!['nivel_recompensa'];
+          var puntos = data['puntos'];
           return Column(
             children: [
               const SizedBox(height: 10),
@@ -34,23 +43,46 @@ class Ofertes extends StatelessWidget {
                   height: 120,
                   width: 300,
                   decoration: BoxDecoration(
-                      color: level.elementAt(value), borderRadius: const BorderRadius.all(Radius.circular(35))),
+                      color: level.elementAt(value),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(35))),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         "Nivell $value",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       Text(getLevel(value)),
+                      const SizedBox(height: 4),
+                      LinearPercentIndicator(
+                        alignment: MainAxisAlignment.center,
+                        width: 140.0,
+                        lineHeight: 10.0,
+                        percent: puntos / getMaxPoints(value),
+                        barRadius: const Radius.circular(16),
+                        backgroundColor: Colors.grey,
+                        progressColor: Colors.white,
+                      ),
                     ],
                   ),
                 ),
               ),
+              ElevatedButton(
+                  onPressed: (() {
+                    setState(() {
+                      addPoints(10);
+                    });
+                  }),
+                  child: Text("+10 punts")),
               StreamBuilder(
-                stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                stream: FirebaseFirestore.instance
+                    .collection("ofertas")
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     List<DocumentSnapshot> offers = snapshot.data!.docs;
                     return Column(
@@ -61,7 +93,8 @@ class Ofertes extends StatelessWidget {
                           width: 340,
                           child: GridView.builder(
                             itemCount: offers.length,
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
@@ -69,7 +102,8 @@ class Ofertes extends StatelessWidget {
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
-                              final expire = offers[index]['fecha_caduca'].toDate();
+                              final expire =
+                                  offers[index]['fecha_caduca'].toDate();
                               final now = DateTime.now();
                               final difference = expire.difference(now).inDays;
                               if (difference > 0) {
@@ -118,6 +152,11 @@ String getLevel(int level) {
   }
 }
 
+int getMaxPoints(int current) {
+  List<int> nextLevel = [50, 150, 300, 500];
+  return nextLevel[current - 1];
+}
+
 class _BoxOffer extends StatelessWidget {
   final int days;
   final double price;
@@ -135,7 +174,9 @@ class _BoxOffer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(35))),
+      decoration: const BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(35))),
       height: 50,
       width: 50,
       child: Column(
@@ -154,7 +195,8 @@ class _BoxOffer extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 2),
               Text(

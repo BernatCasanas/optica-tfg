@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:optica/widgets/ofertes.dart';
 
 enum Historial { graduacio, posar, treure, estoig, blister, solucio }
 
@@ -58,6 +59,57 @@ Future<Usuari?> maybeGetUser() async {
     return null;
   } else {
     return Usuari.fromFirestore(doc.data()!);
+  }
+}
+
+Future<int> maybeGetPoints() async {
+  int points;
+
+  final userRef = getUserRef();
+  final doc = await userRef.get();
+  if (!doc.exists) {
+    points = 0;
+  } else {
+    points = doc['puntos'];
+  }
+
+  return points;
+}
+
+Future<int> maybeGetLevel() async {
+  int level;
+
+  final userRef = getUserRef();
+  final doc = await userRef.get();
+  if (!doc.exists) {
+    level = 0;
+  } else {
+    level = doc['nivel_recompensa'];
+  }
+
+  return level;
+}
+
+void addPoints(int points) async {
+  final userRef = getUserRef();
+  final doc = await userRef.get();
+  if (!doc.exists) {
+    return;
+  } else {
+    int currentPoints = await maybeGetPoints();
+    int level = await maybeGetLevel();
+    if (currentPoints + points >= getMaxPoints(level)) {
+      if (level == 5) return;
+
+      userRef.update({
+        'puntos': currentPoints + points - getMaxPoints(level),
+        'nivel_recompensa': ++level
+      });
+    } else {
+      userRef.update({
+        'puntos': currentPoints + points,
+      });
+    }
   }
 }
 
