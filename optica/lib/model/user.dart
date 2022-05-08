@@ -9,13 +9,15 @@ class Usuari {
   int duracioDiaria;
   bool portaLentilles;
   int nivellRecompensa;
+  int puntos;
 
   Usuari.fromFirestore(Map<String, dynamic> data)
       : codi = data['codigo'],
         nomComplet = data['nombre'],
         duracioDiaria = data['duración_diaria'],
         portaLentilles = data['llevaLentillas'],
-        nivellRecompensa = data['nivel_recompensa'];
+        nivellRecompensa = data['nivel_recompensa'] ?? 1,
+        puntos = data['puntos'] ?? 0;
 
   Future<void> toggleContactLenses() async {
     portaLentilles = !portaLentilles;
@@ -91,25 +93,24 @@ Future<int> maybeGetLevel() async {
 }
 
 void addPoints(int points) async {
-  final userRef = getUserRef();
-  final doc = await userRef.get();
-  if (!doc.exists) {
-    return;
-  } else {
-    int currentPoints = await maybeGetPoints();
-    int level = await maybeGetLevel();
-    if (currentPoints + points >= getMaxPoints(level)) {
-      if (level == 5) return;
-
-      userRef.update({
-        'puntos': currentPoints + points - getMaxPoints(level),
-        'nivel_recompensa': ++level
-      });
-    } else {
-      userRef.update({
-        'puntos': currentPoints + points,
-      });
+  final usuari = await maybeGetUser();
+  if (usuari == null) {
+    throw "Error Intern: no he pogut obtenir l'usuari a 'addPoints'";
+  }
+  final level = usuari.nivellRecompensa;
+  final maxPoints = getLevel(level).maxPoints;
+  if (usuari.puntos + points >= maxPoints) {
+    if (level == 5) {
+      return;
     }
+    getUserRef().update({
+      'puntos': FieldValue.increment(points - maxPoints),
+      'nivel_recompensa': FieldValue.increment(1),
+    });
+  } else {
+    getUserRef().update({
+      'puntos': FieldValue.increment(points),
+    });
   }
 }
 

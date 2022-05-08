@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/user.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -11,30 +10,37 @@ class Ofertes extends StatefulWidget {
   State<Ofertes> createState() => _OfertesState();
 }
 
+class Level {
+  final String description;
+  final Color color;
+  final int maxPoints;
+  const Level(this.description, this.color, this.maxPoints);
+}
+
+const List<Level> allLevels = [
+  Level("Malament", Colors.red, 0),
+  Level("Millorable", Colors.orange, 50),
+  Level("Acceptable", Colors.yellow, 150),
+  Level("Correcte", Colors.greenAccent, 300),
+  Level("Admirable", Colors.green, 500),
+];
+
+Level getLevel(int level) {
+  assert(level >= 1 && level <= 5);
+  return allLevels[level - 1];
+}
+
 class _OfertesState extends State<Ofertes> {
   @override
   Widget build(BuildContext context) {
-    List<Color> level = [
-      Colors.black,
-      Colors.red,
-      Colors.orange,
-      Colors.yellow,
-      Colors.greenAccent,
-      Colors.green,
-    ];
-
-    return FutureBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-      future: FirebaseFirestore.instance
-          .collection("usuarios")
-          .doc(FirebaseAuth.instance.currentUser?.email.toString())
-          .get(),
-      builder: (_, snapshot) {
+    return StreamBuilder<Usuari>(
+      stream: currentUserStream(),
+      builder: (_, AsyncSnapshot<Usuari> snapshot) {
         if (snapshot.hasError) return Text('Error = ${snapshot.error}');
 
         if (snapshot.hasData) {
-          var data = snapshot.data!.data();
-          var value = data!['nivel_recompensa'];
-          var puntos = data['puntos'];
+          final usuari = snapshot.data!;
+          final level = usuari.nivellRecompensa;
           return Column(
             children: [
               const SizedBox(height: 10),
@@ -43,25 +49,24 @@ class _OfertesState extends State<Ofertes> {
                   height: 120,
                   width: 300,
                   decoration: BoxDecoration(
-                      color: level.elementAt(value),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(35))),
+                    color: getLevel(level).color,
+                    borderRadius: const BorderRadius.all(Radius.circular(35)),
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Nivell $value",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 25),
+                        "Nivell ${usuari.nivellRecompensa}",
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
                       ),
                       const SizedBox(height: 15),
-                      Text(getLevel(value)),
+                      Text(getLevel(level).description),
                       const SizedBox(height: 4),
                       LinearPercentIndicator(
                         alignment: MainAxisAlignment.center,
                         width: 140.0,
                         lineHeight: 10.0,
-                        percent: puntos / getMaxPoints(value),
+                        percent: usuari.puntos / getLevel(level).maxPoints,
                         barRadius: const Radius.circular(16),
                         backgroundColor: Colors.grey,
                         progressColor: Colors.white,
@@ -71,58 +76,52 @@ class _OfertesState extends State<Ofertes> {
                 ),
               ),
               ElevatedButton(
-                  onPressed: (() {
-                    setState(() {
-                      addPoints(10);
-                    });
-                  }),
-                  child: Text("+10 punts")),
+                onPressed: () => addPoints(10),
+                child: const Text("+10 punts"),
+              ),
               StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection("ofertas")
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    List<DocumentSnapshot> offers = snapshot.data!.docs;
-                    return Column(
-                      children: [
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height - 400,
-                          width: 340,
-                          child: GridView.builder(
-                            itemCount: offers.length,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              final expire =
-                                  offers[index]['fecha_caduca'].toDate();
-                              final now = DateTime.now();
-                              final difference = expire.difference(now).inDays;
-                              if (difference > 0) {
-                                return _BoxOffer(
-                                    days: difference,
-                                    price: offers[index]['precio'],
-                                    title: offers[index]['nombre'],
-                                    description: offers[index]['descripción']);
-                              } else {
-                                return Container();
-                              }
-                            },
-                          ),
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const CircularProgressIndicator();
+                // TODO: Crear una clase Oferta i fer una funció ofertesStream()
+                // semblant a currentUserStream()
+                stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
                   }
+                  List<DocumentSnapshot> offers = snapshot.data!.docs;
+                  return Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height - 400,
+                        width: 340,
+                        child: GridView.builder(
+                          itemCount: offers.length,
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            final expire = offers[index]['fecha_caduca'].toDate();
+                            final now = DateTime.now();
+                            final difference = expire.difference(now).inDays;
+                            if (difference > 0) {
+                              return _BoxOffer(
+                                days: difference,
+                                price: offers[index]['precio'],
+                                title: offers[index]['nombre'],
+                                description: offers[index]['descripción'],
+                              );
+                            } else {
+                              return Container();
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
                 },
               ),
             ],
@@ -133,28 +132,6 @@ class _OfertesState extends State<Ofertes> {
       },
     );
   }
-}
-
-String getLevel(int level) {
-  switch (level) {
-    case 1:
-      return "Malament";
-    case 2:
-      return "Millorable";
-    case 3:
-      return "Acceptable";
-    case 4:
-      return "Correcte";
-    case 5:
-      return "Admirable";
-    default:
-      return "Sense Nivell";
-  }
-}
-
-int getMaxPoints(int current) {
-  List<int> nextLevel = [50, 150, 300, 500];
-  return nextLevel[current - 1];
 }
 
 class _BoxOffer extends StatelessWidget {
@@ -175,8 +152,7 @@ class _BoxOffer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          color: Colors.grey,
-          borderRadius: BorderRadius.all(Radius.circular(35))),
+          color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(35))),
       height: 50,
       width: 50,
       child: Column(
@@ -195,8 +171,7 @@ class _BoxOffer extends StatelessWidget {
             children: [
               Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 2),
               Text(
