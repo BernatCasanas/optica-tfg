@@ -4,6 +4,7 @@ import 'package:optica/widgets/alertes.dart';
 import 'package:optica/widgets/calendari.dart';
 import 'package:optica/widgets/editar.dart';
 import 'package:optica/widgets/ofertes.dart';
+import 'package:optica/widgets/primera.dart';
 
 class Page {
   final Widget widget;
@@ -14,11 +15,12 @@ class Page {
 const List<Page> pages = [
   Page("Alertes", Alertes()),
   Page("Calendari", Calendari()),
+  Page("Primera", Primera()),
   Page("Ofertes", Ofertes()),
   Page("Editar", Editar()),
 ];
 
-int indexPage = 0;
+int indexPage = 2;
 
 class Principal extends StatefulWidget {
   const Principal({Key? key}) : super(key: key);
@@ -51,29 +53,37 @@ class _PrincipalState extends State<Principal> {
                     children: [
                       Text(
                         pages[indexPage].name,
-                        style: const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
                       ),
                       StreamBuilder<Usuari>(
                         stream: currentUserStream(),
-                        builder: (BuildContext context, AsyncSnapshot<Usuari> snapshot) {
+                        builder: (BuildContext context,
+                            AsyncSnapshot<Usuari> snapshot) {
                           switch (snapshot.connectionState) {
                             case ConnectionState.none:
-                              throw ErrorWidget("Estat 'none' al StreamBuilder de l'usuari");
+                              throw ErrorWidget(
+                                  "Estat 'none' al StreamBuilder de l'usuari");
                             case ConnectionState.waiting:
-                              return const Center(child: CircularProgressIndicator());
+                              return const Center(
+                                  child: CircularProgressIndicator());
                             case ConnectionState.done:
-                              return ErrorWidget("L'Stream de l'usuari s'ha acabat! No hauria...");
+                              return ErrorWidget(
+                                  "L'Stream de l'usuari s'ha acabat! No hauria...");
                             case ConnectionState.active:
                               var usuari = snapshot.data!;
                               return ElevatedButton(
                                 onPressed: () => usuari.toggleContactLenses(),
                                 child: Text(
-                                  usuari.portaLentilles ? 'Treure Lents' : "Posar Lents",
+                                  usuari.portaLentilles
+                                      ? 'Treure Lents'
+                                      : "Posar Lents",
                                 ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Colors.blue,
                                   textStyle: const TextStyle(fontSize: 15),
-                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 50),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 50),
                                 ),
                               );
                           }
@@ -139,9 +149,16 @@ class _NavigatorBar extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.shopping_bag),
+              icon: const Icon(Icons.home),
               onPressed: () {
                 indexPage = 2;
+                notifyParent();
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.shopping_bag),
+              onPressed: () {
+                indexPage = 3;
                 notifyParent();
               },
             ),
@@ -150,7 +167,7 @@ class _NavigatorBar extends StatelessWidget {
               child: IconButton(
                 icon: const Icon(Icons.edit),
                 onPressed: () {
-                  indexPage = 3;
+                  indexPage = 4;
                   notifyParent();
                 },
               ),

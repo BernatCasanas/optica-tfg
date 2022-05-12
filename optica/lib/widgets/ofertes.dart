@@ -18,9 +18,9 @@ class Level {
 }
 
 const List<Level> allLevels = [
-  Level("Malament", Colors.red, 0),
-  Level("Millorable", Colors.orange, 50),
-  Level("Acceptable", Colors.yellow, 150),
+  Level("Malament", Colors.red, 50),
+  Level("Millorable", Colors.orange, 100),
+  Level("Acceptable", Colors.yellow, 200),
   Level("Correcte", Colors.greenAccent, 300),
   Level("Admirable", Colors.green, 500),
 ];
@@ -57,7 +57,8 @@ class _OfertesState extends State<Ofertes> {
                     children: [
                       Text(
                         "Nivell ${usuari.nivellRecompensa}",
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 25),
                       ),
                       const SizedBox(height: 15),
                       Text(getLevel(level).description),
@@ -82,8 +83,11 @@ class _OfertesState extends State<Ofertes> {
               StreamBuilder(
                 // TODO: Crear una clase Oferta i fer una funció ofertesStream()
                 // semblant a currentUserStream()
-                stream: FirebaseFirestore.instance.collection("ofertas").snapshots(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                stream: FirebaseFirestore.instance
+                    .collection("ofertas")
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -96,7 +100,8 @@ class _OfertesState extends State<Ofertes> {
                         width: 340,
                         child: GridView.builder(
                           itemCount: offers.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
@@ -104,7 +109,8 @@ class _OfertesState extends State<Ofertes> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {
-                            final expire = offers[index]['fecha_caduca'].toDate();
+                            final expire =
+                                offers[index]['fecha_caduca'].toDate();
                             final now = DateTime.now();
                             final difference = expire.difference(now).inDays;
                             if (difference > 0) {
@@ -152,7 +158,8 @@ class _BoxOffer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          color: Colors.grey, borderRadius: BorderRadius.all(Radius.circular(35))),
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(35))),
       height: 50,
       width: 50,
       child: Column(
@@ -171,7 +178,8 @@ class _BoxOffer extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 2),
               Text(
