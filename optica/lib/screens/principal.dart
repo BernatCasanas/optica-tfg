@@ -56,39 +56,6 @@ class _PrincipalState extends State<Principal> {
                         style: const TextStyle(
                             fontSize: 25, fontWeight: FontWeight.bold),
                       ),
-                      StreamBuilder<Usuari>(
-                        stream: currentUserStream(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<Usuari> snapshot) {
-                          switch (snapshot.connectionState) {
-                            case ConnectionState.none:
-                              throw ErrorWidget(
-                                  "Estat 'none' al StreamBuilder de l'usuari");
-                            case ConnectionState.waiting:
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            case ConnectionState.done:
-                              return ErrorWidget(
-                                  "L'Stream de l'usuari s'ha acabat! No hauria...");
-                            case ConnectionState.active:
-                              var usuari = snapshot.data!;
-                              return ElevatedButton(
-                                onPressed: () => usuari.toggleContactLenses(),
-                                child: Text(
-                                  usuari.portaLentilles
-                                      ? 'Treure Lents'
-                                      : "Posar Lents",
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  textStyle: const TextStyle(fontSize: 15),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 50),
-                                ),
-                              );
-                          }
-                        },
-                      ),
                       TextButton(
                         onPressed: signOut,
                         child: Container(
