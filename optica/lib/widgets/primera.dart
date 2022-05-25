@@ -52,7 +52,7 @@ class _PrimeraState extends State<Primera> {
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
-                child: Text("Tutorials"),
+                child: const Text("Tutorials"),
               ),
               ElevatedButton(
                 onPressed: () {
@@ -63,7 +63,7 @@ class _PrimeraState extends State<Primera> {
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
-                child: Text("Precaucions"),
+                child: const Text("Precaucions"),
               ),
               StreamBuilder<Usuari>(
                 stream: currentUserStream(),
@@ -101,10 +101,12 @@ class _PrimeraState extends State<Primera> {
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
-                child: Text("Classificació"),
+                child: const Text("Classificació"),
               )
             ],
-          )
+          ),
+          ElevatedButton(
+              onPressed: () {}, child: const Text("No me les he ficat"))
         ],
       ),
     );
@@ -117,7 +119,7 @@ Widget _buildPopupDialog(BuildContext context, String name) {
     content: Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[],
+      children: const <Widget>[],
     ),
     actions: <Widget>[
       name == "Classificació"

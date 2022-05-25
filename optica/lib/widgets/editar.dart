@@ -10,7 +10,12 @@ class Editar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> texts = {"Obrir Blister", "Obrir Solució", "Canviar Estoig", "Canviar Graduació"}.toList();
+    List<String> texts = {
+      "Obrir Blister",
+      "Obrir Solució",
+      "Canviar Estoig",
+      "Canviar Graduació"
+    }.toList();
 
     return Column(
       children: [
@@ -36,16 +41,18 @@ class Editar extends StatelessWidget {
                         return AlertDialog(
                           title: Text(texts.elementAt(index)),
                           content: SizedBox(
-                            height: index != 0 ? 30 : 90,
+                            height: index != 0 ? 30 : 140,
                             child: index == 0
                                 ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       const Text("Introdueix vida útil"),
                                       TextField(
                                         keyboardType: TextInputType.number,
                                         controller: controller,
                                       ),
+                                      const SizedBox(height: 5),
                                       const Text("Introdueix duració diaria"),
                                       TextField(
                                         keyboardType: TextInputType.number,
@@ -60,7 +67,9 @@ class Editar extends StatelessWidget {
                               child: const Text("D'acord"),
                               onPressed: () {
                                 canPop = true;
-                                if (controller.text != "" && controller1.text != "" && index == 0) {
+                                if (controller.text != "" &&
+                                    controller1.text != "" &&
+                                    index == 0) {
                                   canPop = true;
                                 } else if (index != 0) {
                                   canPop = true;
@@ -76,12 +85,17 @@ class Editar extends StatelessWidget {
                                   case 0:
                                     dir.add({
                                       'tipo': Avisos.lents.index,
-                                      'tiempo': today.add(Duration(days: int.parse(controller.text))),
+                                      'tiempo': today.add(Duration(
+                                          days: int.parse(controller.text))),
                                     });
                                     FirebaseFirestore.instance
                                         .collection("usuarios")
-                                        .doc(FirebaseAuth.instance.currentUser?.email)
-                                        .update({'duración_diaria': int.parse(controller1.text)});
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser?.email)
+                                        .update({
+                                      'duración_diaria':
+                                          int.parse(controller1.text)
+                                    });
                                     dir2.add({
                                       'tipo': Historial.blister.index,
                                       'fecha': DateTime.now(),
@@ -90,7 +104,8 @@ class Editar extends StatelessWidget {
                                   case 1:
                                     dir.add({
                                       'tipo': Avisos.solucio.index,
-                                      'tiempo': today.add(const Duration(days: 60)),
+                                      'tiempo':
+                                          today.add(const Duration(days: 60)),
                                     });
                                     dir2.add({
                                       'tipo': Historial.solucio.index,
@@ -100,7 +115,8 @@ class Editar extends StatelessWidget {
                                   case 2:
                                     dir.add({
                                       'tipo': Avisos.estoig.index,
-                                      'tiempo': today.add(const Duration(days: 90)),
+                                      'tiempo':
+                                          today.add(const Duration(days: 90)),
                                     });
                                     dir2.add({
                                       'tipo': Historial.estoig.index,
@@ -121,7 +137,8 @@ class Editar extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const Configura2Graduacio(fromEditScreen: true),
+                        builder: (_) =>
+                            const Configura2Graduacio(fromEditScreen: true),
                       ),
                     );
                   }
@@ -156,10 +173,12 @@ class Editar extends StatelessWidget {
                     content: StreamBuilder(
                       stream: FirebaseFirestore.instance
                           .collection("usuarios")
-                          .doc(FirebaseAuth.instance.currentUser!.email.toString())
+                          .doc(FirebaseAuth.instance.currentUser!.email
+                              .toString())
                           .collection("historial")
                           .snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasError) {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasData) {
@@ -171,7 +190,8 @@ class Editar extends StatelessWidget {
                               String title = "";
                               IconData icon = Icons.star;
                               DateTime? _date = e['fecha'].toDate();
-                              String subtitle = "${_date!.day}/${_date.month}/${_date.year}";
+                              String subtitle =
+                                  "${_date!.day}/${_date.month}/${_date.year}";
 
                               switch (e['tipo']) {
                                 case 0:
