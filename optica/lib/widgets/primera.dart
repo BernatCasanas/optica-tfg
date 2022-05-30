@@ -81,11 +81,21 @@ class _PrimeraState extends State<Primera> {
                     case ConnectionState.active:
                       var usuari = snapshot.data!;
                       return ElevatedButton(
-                        onPressed: () => usuari.toggleContactLenses(),
+                        onPressed: () {
+                          if (usuari.ultimo_cambio.day != DateTime.now().day) {
+                            usuari.toggleContactLenses();
+                            if (!usuari.portaLentilles) {
+                              usuari.userActionUpdate();
+                            }
+                          }
+                        },
                         child: Text(
                           usuari.portaLentilles
                               ? 'Treure Lents'
                               : "Posar Lents",
+                          style: usuari.ultimo_cambio.day == DateTime.now().day
+                              ? TextStyle(color: Colors.grey[600])
+                              : const TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(primary: Colors.grey),
                       );
@@ -102,11 +112,40 @@ class _PrimeraState extends State<Primera> {
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
                 child: const Text("Classificació"),
-              )
+              ),
             ],
           ),
-          ElevatedButton(
-              onPressed: () {}, child: const Text("No me les he ficat"))
+          StreamBuilder<Usuari>(
+            stream: currentUserStream(),
+            builder: (BuildContext context, AsyncSnapshot<Usuari> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  throw ErrorWidget(
+                      "Estat 'none' al StreamBuilder de l'usuari");
+                case ConnectionState.waiting:
+                  return const Center(child: CircularProgressIndicator());
+                case ConnectionState.done:
+                  return ErrorWidget(
+                      "L'Stream de l'usuari s'ha acabat! No hauria...");
+                case ConnectionState.active:
+                  var usuari = snapshot.data!;
+                  return ElevatedButton(
+                      onPressed: () {
+                        if (usuari.ultimo_cambio.day != DateTime.now().day &&
+                            !usuari.portaLentilles) {
+                          usuari.userActionUpdate();
+                        }
+                      },
+                      child: Text(
+                        "No me les he ficat",
+                        style: usuari.ultimo_cambio.day == DateTime.now().day ||
+                                usuari.portaLentilles
+                            ? TextStyle(color: Colors.grey[600])
+                            : const TextStyle(color: Colors.white),
+                      ));
+              }
+            },
+          ),
         ],
       ),
     );
@@ -129,6 +168,7 @@ Widget _buildPopupDialog(BuildContext context, String name) {
               child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
                 stream: FirebaseFirestore.instance
                     .collection("usuarios")
+                    .orderBy("puntos", descending: true)
                     .snapshots(),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {

@@ -11,6 +11,8 @@ class Usuari {
   int nivellRecompensa;
   int puntos;
   int racha;
+  DateTime tiempoCuentaCreada;
+  DateTime ultimo_cambio;
 
   Usuari.fromFirestore(Map<String, dynamic> data)
       : codi = data['codigo'],
@@ -19,7 +21,9 @@ class Usuari {
         portaLentilles = data['llevaLentillas'],
         nivellRecompensa = data['nivel_recompensa'] ?? 1,
         puntos = data['puntos'] ?? 0,
-        racha = data['racha'] ?? 0;
+        racha = data['racha'] ?? 0,
+        tiempoCuentaCreada = data['tiempoCuentaCreada'].toDate(),
+        ultimo_cambio = data['ultimo_cambio'].toDate();
 
   Future<void> toggleContactLenses() async {
     portaLentilles = !portaLentilles;
@@ -37,6 +41,9 @@ class Usuari {
       });
     }
   }
+
+  void userActionUpdate() =>
+      getUserRef().update({'ultimo_cambio': DateTime.now()});
 }
 
 Future<void> signOut() async {
@@ -127,5 +134,7 @@ Future<void> initializeUserData() async {
     'nombre': "",
     'puntos': 10,
     'racha': 1,
+    'tiempoCuentaCreada': DateTime.now(),
+    'ultimo_cambio': DateTime(2000, 1, 1),
   });
 }

@@ -9,7 +9,8 @@ import 'package:optica/screens/principal.dart';
 import 'package:optica/widgets/big_text.dart';
 
 class Configura2Graduacio extends StatefulWidget {
-  const Configura2Graduacio({Key? key, required this.fromEditScreen}) : super(key: key);
+  const Configura2Graduacio({Key? key, required this.fromEditScreen})
+      : super(key: key);
 
   final bool fromEditScreen;
 
@@ -72,7 +73,9 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                   ),
                   const SizedBox(height: 15),
                   TextButton(
-                    child: Text(_dateTime == null ? "Tria una data" : DateFormat("yyyy-MM-dd").format(_dateTime!)),
+                    child: Text(_dateTime == null
+                        ? "Tria una data"
+                        : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(150, 40),
                         shape: const StadiumBorder(),
@@ -93,7 +96,8 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                   ),
                   const SizedBox(height: 15),
                   TextButton(
-                    child: const Text("Guardar", style: TextStyle(fontSize: 10)),
+                    child:
+                        const Text("Guardar", style: TextStyle(fontSize: 10)),
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(100, 40),
                         shape: const StadiumBorder(),
@@ -133,12 +137,21 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                           .collection("usuarios")
                           .doc(currentUser.email.toString())
                           .collection("historial")
-                          .add({'fecha': _dateTime, 'tipo': Historial.graduacio.index, 'graduación': graduation});
-                      controller1_1.text = controller1_2.text = controller1_3.text = controller1_4.text =
-                          controller2_1.text = controller2_2.text = controller2_3.text = controller2_4.text = "";
+                          .add({
+                        'fecha': _dateTime,
+                        'tipo': Historial.graduacio.index,
+                        'graduación': graduation
+                      });
+                      controller1_1.text = controller1_2.text =
+                          controller1_3.text = controller1_4.text =
+                              controller2_1.text = controller2_2.text =
+                                  controller2_3.text = controller2_4.text = "";
                     },
                   ),
-                  error == true ? const Text("Falta omplir dades", style: TextStyle(color: Colors.red)) : Container(),
+                  error == true
+                      ? const Text("Falta omplir dades",
+                          style: TextStyle(color: Colors.red))
+                      : Container(),
                 ],
               ),
             ),
@@ -147,7 +160,8 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                      child: const Text("Historial", style: TextStyle(fontSize: 20)),
+                      child: const Text("Historial",
+                          style: TextStyle(fontSize: 20)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -162,10 +176,13 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                                 content: StreamBuilder(
                                   stream: db
                                       .collection("usuarios")
-                                      .doc(FirebaseAuth.instance.currentUser!.email.toString())
+                                      .doc(FirebaseAuth
+                                          .instance.currentUser!.email
+                                          .toString())
                                       .collection("historial")
                                       .snapshots(),
-                                  builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<QuerySnapshot> snapshot) {
                                     if (snapshot.hasError) {
                                       return const CircularProgressIndicator();
                                     } else if (snapshot.hasData) {
@@ -173,18 +190,24 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                                         height: 400,
                                         width: 100,
                                         child: ListView(
-                                            children: snapshot.data!.docs.map((e) {
+                                            children:
+                                                snapshot.data!.docs.map((e) {
                                           DateTime? date = e['fecha'].toDate();
-                                          List<dynamic> graduacion = <dynamic>[];
+                                          List<dynamic> graduacion =
+                                              <dynamic>[];
                                           if (e['tipo'] == 0) {
-                                            graduacion = List.from(e['graduación']);
+                                            graduacion =
+                                                List.from(e['graduación']);
                                           }
                                           return Card(
                                             child: e['tipo'] == 0
                                                 ? ListTile(
-                                                    leading: const Icon(Icons.lens_blur),
-                                                    title: Text("${date!.day}/${date.month}/${date.year}"),
-                                                    subtitle: Text(graduacion.toString()),
+                                                    leading: const Icon(
+                                                        Icons.lens_blur),
+                                                    title: Text(
+                                                        "${date!.day}/${date.month}/${date.year}"),
+                                                    subtitle: Text(
+                                                        graduacion.toString()),
                                                   )
                                                 : Container(),
                                           );
@@ -218,9 +241,10 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                           onPrimary: Colors.black),
                       onPressed: () {
                         !widget.fromEditScreen
-                            ? Navigator.push(
+                            ? Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const Principal()),
+                                MaterialPageRoute(
+                                    builder: (context) => const Principal()),
                               )
                             : Navigator.of(context).pop();
                       },
