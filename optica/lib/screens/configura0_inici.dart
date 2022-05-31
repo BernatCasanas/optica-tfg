@@ -53,47 +53,49 @@ class _Configura0IniciState extends State<Configura0Inici> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const Spacer(flex: 2),
-          const Expanded(
-            flex: 2,
-            child: BigText(text: "NomApp"),
-          ),
-          Expanded(
-            flex: 2,
-            child: Column(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Spacer(flex: 2),
+            const Expanded(
+              flex: 2,
+              child: BigText(text: "NomApp"),
+            ),
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  _InputBox(name: "Nom", controller: controllerNombre),
+                  const SizedBox(height: 12),
+                  _InputBox(
+                      name: "Codi Deontologic", controller: controllerCodigo),
+                ],
+              ),
+            ),
+            const Spacer(),
+            Column(
               children: [
-                _InputBox(name: "Nom", controller: controllerNombre),
-                const SizedBox(height: 12),
-                _InputBox(
-                    name: "Codi Deontologic", controller: controllerCodigo),
+                ElevatedButton(
+                  onPressed: buttonEnabled ? saveDataAndNextStep : null,
+                  child: const Text("Accedeix"),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(200, 50),
+                    shape: const StadiumBorder(),
+                    primary: Colors.grey,
+                  ),
+                ),
+                if (error)
+                  const Text(
+                    "Falta omplir dades",
+                    style: TextStyle(color: Colors.red),
+                  )
               ],
             ),
-          ),
-          const Spacer(),
-          Column(
-            children: [
-              ElevatedButton(
-                onPressed: buttonEnabled ? saveDataAndNextStep : null,
-                child: const Text("Accedeix"),
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(200, 50),
-                  shape: const StadiumBorder(),
-                  primary: Colors.grey,
-                ),
-              ),
-              if (error)
-                const Text(
-                  "Falta omplir dades",
-                  style: TextStyle(color: Colors.red),
-                )
-            ],
-          ),
-          const Spacer(),
-        ],
+            const Spacer(),
+          ],
+        ),
       ),
     );
   }
