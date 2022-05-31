@@ -251,24 +251,7 @@ class Editar extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Expanded(
-          child: SingleChildScrollView(
-            child: Container(
-              color: Colors.grey,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: const [
-                    Text(
-                      "Espai per afegir més editables",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 4),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          child: SingleChildScrollView(child: Container()),
         )
       ],
     );

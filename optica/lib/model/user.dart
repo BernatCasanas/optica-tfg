@@ -49,6 +49,8 @@ class Usuari {
     } else {
       getUserRef().update(
           {'ultimo_cambio': DateTime.now(), 'racha': FieldValue.increment(1)});
+      addPoints(10 +
+          racha); //Aqui dona doble puntuació. Sha de fer d'alguna manera que només rebi al final.
     }
   }
 }

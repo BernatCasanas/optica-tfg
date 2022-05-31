@@ -76,10 +76,6 @@ class _OfertesState extends State<Ofertes> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                onPressed: () => addPoints(10),
-                child: const Text("+10 punts"),
-              ),
               StreamBuilder(
                 // TODO: Crear una clase Oferta i fer una funció ofertesStream()
                 // semblant a currentUserStream()

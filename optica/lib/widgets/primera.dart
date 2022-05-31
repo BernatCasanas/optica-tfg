@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:optica/model/user.dart';
 
@@ -48,7 +49,7 @@ class _PrimeraState extends State<Primera> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
-                        _buildPopupDialog(context, "Tutorials"),
+                        _buildPopUpGeneral(context, "Tutorials"),
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
@@ -59,7 +60,7 @@ class _PrimeraState extends State<Primera> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
-                        _buildPopupDialog(context, "Precaucions"),
+                        _buildPopUpGeneral(context, "Precaucions"),
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
@@ -86,6 +87,15 @@ class _PrimeraState extends State<Primera> {
                             usuari.toggleContactLenses();
                             if (!usuari.portaLentilles) {
                               usuari.userActionUpdate();
+                              var difference = -usuari.tiempoCuentaCreada
+                                  .difference(DateTime.now())
+                                  .inDays;
+                              if (difference <= 5) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        const _buildPopUpFeedback());
+                              }
                             }
                           }
                         },
@@ -107,7 +117,7 @@ class _PrimeraState extends State<Primera> {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) =>
-                        _buildPopupDialog(context, "Classificació"),
+                        _buildPopUpGeneral(context, "Classificació"),
                   );
                 },
                 style: ElevatedButton.styleFrom(primary: Colors.grey),
@@ -152,7 +162,7 @@ class _PrimeraState extends State<Primera> {
   }
 }
 
-Widget _buildPopupDialog(BuildContext context, String name) {
+Widget _buildPopUpGeneral(BuildContext context, String name) {
   return AlertDialog(
     title: Text(name),
     content: Column(
@@ -203,4 +213,209 @@ Widget _buildPopupDialog(BuildContext context, String name) {
       ),
     ],
   );
+}
+
+bool posar = false, durant = false, treure = false;
+
+class _buildPopUpFeedback extends StatefulWidget {
+  const _buildPopUpFeedback({Key? key}) : super(key: key);
+
+  @override
+  State<_buildPopUpFeedback> createState() => __buildPopUpFeedbackState();
+}
+
+class __buildPopUpFeedbackState extends State<_buildPopUpFeedback> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("Com estàs?"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: const <Widget>[],
+      ),
+      actions: <Widget>[
+        SizedBox(
+          width: MediaQuery.of(context).size.height * 2 / 3,
+          height: MediaQuery.of(context).size.height * 2 / 3,
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection("usuarios")
+                .orderBy("puntos", descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                  throw ErrorWidget(
+                      "Estat 'none' al StreamBuilder de l'usuari");
+                case ConnectionState.waiting:
+                  return const Center(child: CircularProgressIndicator());
+                case ConnectionState.done:
+                  return ErrorWidget(
+                      "L'Stream de l'usuari s'ha acabat! No hauria...");
+                case ConnectionState.active:
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Tutorials",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      GridView(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          children: const [
+                            Tutorial_Box(text: "Posar Lents"),
+                            Tutorial_Box(text: "Conservar Lents"),
+                            Tutorial_Box(text: "Treure Lents")
+                          ]),
+                      SizedBox(
+                        height: 20,
+                        child: Row(
+                          children: [
+                            const Text("Dificultats al posarte les lents?"),
+                            Checkbox(
+                                value: posar,
+                                onChanged: (val) {
+                                  setState(() {
+                                    posar = val!;
+                                  });
+                                })
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                        child: Row(
+                          children: [
+                            const Text("Dificultats durante el dia?"),
+                            Checkbox(
+                                value: durant,
+                                onChanged: (val) {
+                                  setState(() {
+                                    durant = val!;
+                                  });
+                                })
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                        child: Row(
+                          children: [
+                            const Text("Dificultats al treure les lents?"),
+                            Checkbox(
+                                value: treure,
+                                onChanged: (val) {
+                                  setState(() {
+                                    treure = val!;
+                                  });
+                                })
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+              }
+            },
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final db = FirebaseFirestore.instance
+                .collection("usuarios")
+                .doc(FirebaseAuth.instance.currentUser?.email)
+                .collection("tutoriales");
+            db.add({
+              'dif_posar': posar,
+              'dif_durant': durant,
+              'dif_treure': treure
+            });
+
+            Navigator.of(context).pop();
+          },
+          child: const Text('Guardar'),
+        ),
+      ],
+    );
+  }
+}
+
+class Tutorial_Box extends StatelessWidget {
+  final String text;
+  const Tutorial_Box({Key? key, required this.text}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          color: Colors.grey,
+          borderRadius: BorderRadius.all(Radius.circular(35))),
+      height: 25,
+      width: 25,
+      child:
+          Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        const Icon(Icons.photo),
+        Text(
+          text,
+          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      ]),
+    );
+  }
+}
+
+class Question extends StatefulWidget {
+  final String text;
+  final int type;
+  const Question({Key? key, required this.text, required this.type})
+      : super(key: key);
+
+  @override
+  State<Question> createState() => _QuestionState();
+}
+
+class _QuestionState extends State<Question> {
+  @override
+  Widget build(BuildContext context) {
+    bool value = false;
+
+    return SizedBox(
+      height: 20,
+      child: Row(
+        children: [
+          Text(widget.text),
+          Checkbox(
+              value: value,
+              onChanged: (val) {
+                setState(() {
+                  value = val!;
+                  switch (widget.type) {
+                    case 0:
+                      posar = value;
+                      break;
+                    case 1:
+                      durant = value;
+                      break;
+                    case 2:
+                      treure = value;
+                      break;
+                    default:
+                  }
+                });
+              })
+        ],
+      ),
+    );
+  }
 }
