@@ -42,8 +42,15 @@ class Usuari {
     }
   }
 
-  void userActionUpdate() =>
-      getUserRef().update({'ultimo_cambio': DateTime.now()});
+  void userActionUpdate() {
+    final difference = ultimo_cambio.difference(DateTime.now()).inDays;
+    if (-difference > 1) {
+      getUserRef().update({'ultimo_cambio': DateTime.now(), 'racha': 1});
+    } else {
+      getUserRef().update(
+          {'ultimo_cambio': DateTime.now(), 'racha': FieldValue.increment(1)});
+    }
+  }
 }
 
 Future<void> signOut() async {
