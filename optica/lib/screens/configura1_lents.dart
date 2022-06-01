@@ -161,19 +161,23 @@ class _Configura1LentsState extends State<Configura1Lents> {
                     var today = DateTime.now();
 
                     db.add({
+                      'nombre': 'Avis Estoig',
                       'tipo': Avisos.estoig.index,
                       'tiempo': today.add(const Duration(days: 90)),
                     });
                     db.add({
+                      'nombre': 'Avis Lents',
                       'tipo': Avisos.lents.index,
                       'tiempo': today
                           .add(Duration(days: int.parse(controllerLents.text))),
                     });
                     db.add({
+                      'nombre': 'Avis Solució',
                       'tipo': Avisos.solucio.index,
                       'tiempo': today.add(const Duration(days: 60)),
                     });
                     db.add({
+                      'nombre': 'Avis Revisió',
                       'tipo': Avisos.revisio.index,
                       'tiempo':
                           today.add(_dateTime!.difference(DateTime.now())),

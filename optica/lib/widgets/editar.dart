@@ -84,6 +84,7 @@ class Editar extends StatelessWidget {
                                 switch (index) {
                                   case 0:
                                     dir.add({
+                                      'nombre': 'Avis Lents',
                                       'tipo': Avisos.lents.index,
                                       'tiempo': today.add(Duration(
                                           days: int.parse(controller.text))),
@@ -103,6 +104,7 @@ class Editar extends StatelessWidget {
                                     break;
                                   case 1:
                                     dir.add({
+                                      'nombre': 'Avis Solució',
                                       'tipo': Avisos.solucio.index,
                                       'tiempo':
                                           today.add(const Duration(days: 60)),
@@ -114,6 +116,7 @@ class Editar extends StatelessWidget {
                                     break;
                                   case 2:
                                     dir.add({
+                                      'nombre': 'Avis Estoig',
                                       'tipo': Avisos.estoig.index,
                                       'tiempo':
                                           today.add(const Duration(days: 90)),
