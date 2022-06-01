@@ -12,7 +12,7 @@ class Usuari {
   int puntos;
   int racha;
   DateTime tiempoCuentaCreada;
-  DateTime ultimo_cambio;
+  DateTime ultimoCambio;
 
   Usuari.fromFirestore(Map<String, dynamic> data)
       : codi = data['codigo'],
@@ -23,7 +23,7 @@ class Usuari {
         puntos = data['puntos'] ?? 0,
         racha = data['racha'] ?? 0,
         tiempoCuentaCreada = data['tiempoCuentaCreada'].toDate(),
-        ultimo_cambio = data['ultimo_cambio'].toDate();
+        ultimoCambio = data['ultimo_cambio'].toDate();
 
   Future<void> toggleContactLenses() async {
     portaLentilles = !portaLentilles;
@@ -43,7 +43,7 @@ class Usuari {
   }
 
   void userActionUpdate() {
-    final difference = ultimo_cambio.difference(DateTime.now()).inDays;
+    final difference = ultimoCambio.difference(DateTime.now()).inDays;
     if (-difference > 1) {
       getUserRef().update({'ultimo_cambio': DateTime.now(), 'racha': 1});
     } else {

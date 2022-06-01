@@ -26,10 +26,10 @@ class Principal extends StatefulWidget {
   const Principal({Key? key}) : super(key: key);
 
   @override
-  _PrincipalState createState() => _PrincipalState();
+  PrincipalState createState() => PrincipalState();
 }
 
-class _PrincipalState extends State<Principal> {
+class PrincipalState extends State<Principal> {
   void refresh() {
     setState(() {});
   }
@@ -48,6 +48,7 @@ class _PrincipalState extends State<Principal> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Align(
+                  alignment: Alignment.bottomLeft,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -70,7 +71,6 @@ class _PrincipalState extends State<Principal> {
                       ),
                     ],
                   ),
-                  alignment: Alignment.bottomLeft,
                 ),
               ),
             ),

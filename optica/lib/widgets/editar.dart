@@ -148,20 +148,17 @@ class Editar extends StatelessWidget {
                 },
                 child: Container(
                   alignment: Alignment.center,
+                  color: Colors.grey,
                   child: Text(
                     texts[index],
                     style: const TextStyle(color: Colors.black),
                   ),
-                  color: Colors.grey,
                 ),
               );
             },
           ),
         ),
         TextButton(
-          child: const Text(
-            "Historial",
-          ),
           style: ElevatedButton.styleFrom(
               minimumSize: const Size(100, 40),
               shape: const StadiumBorder(),
@@ -192,9 +189,9 @@ class Editar extends StatelessWidget {
                                 children: snapshot.data!.docs.map((e) {
                               String title = "";
                               IconData icon = Icons.star;
-                              DateTime? _date = e['fecha'].toDate();
+                              DateTime? date = e['fecha'].toDate();
                               String subtitle =
-                                  "${_date!.day}/${_date.month}/${_date.year}";
+                                  "${date!.day}/${date.month}/${date.year}";
 
                               switch (e['tipo']) {
                                 case 0:
@@ -251,6 +248,9 @@ class Editar extends StatelessWidget {
                   );
                 });
           },
+          child: const Text(
+            "Historial",
+          ),
         ),
         const SizedBox(height: 10),
         Expanded(

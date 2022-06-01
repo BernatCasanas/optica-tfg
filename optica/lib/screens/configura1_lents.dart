@@ -102,9 +102,6 @@ class _Configura1LentsState extends State<Configura1Lents> {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               const SmallText(text: "Revisió"),
               TextButton(
-                child: Text(_dateTime == null
-                    ? "Tria una data"
-                    : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                 style: ElevatedButton.styleFrom(
                     minimumSize: const Size(150, 40),
                     shape: const StadiumBorder(),
@@ -122,6 +119,9 @@ class _Configura1LentsState extends State<Configura1Lents> {
                     });
                   });
                 },
+                child: Text(_dateTime == null
+                    ? "Tria una data"
+                    : DateFormat("yyyy-MM-dd").format(_dateTime!)),
               )
             ]),
           ),
@@ -130,8 +130,6 @@ class _Configura1LentsState extends State<Configura1Lents> {
             child: Column(
               children: [
                 TextButton(
-                  child:
-                      const Text("Continuar", style: TextStyle(fontSize: 10)),
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(100, 40),
                       shape: const StadiumBorder(),
@@ -197,6 +195,8 @@ class _Configura1LentsState extends State<Configura1Lents> {
                               const Configura2Graduacio(fromEditScreen: false)),
                     );
                   },
+                  child:
+                      const Text("Continuar", style: TextStyle(fontSize: 10)),
                 ),
                 const SizedBox(height: 2),
                 error == true

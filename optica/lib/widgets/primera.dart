@@ -83,7 +83,7 @@ class _PrimeraState extends State<Primera> {
                       var usuari = snapshot.data!;
                       return ElevatedButton(
                         onPressed: () {
-                          if (usuari.ultimo_cambio.day != DateTime.now().day) {
+                          if (usuari.ultimoCambio.day != DateTime.now().day) {
                             usuari.toggleContactLenses();
                             if (!usuari.portaLentilles) {
                               usuari.userActionUpdate();
@@ -94,20 +94,20 @@ class _PrimeraState extends State<Primera> {
                                 showDialog(
                                     context: context,
                                     builder: (BuildContext context) =>
-                                        const _buildPopUpFeedback());
+                                        const _BuildPopUpFeedback());
                               }
                             }
                           }
                         },
+                        style: ElevatedButton.styleFrom(primary: Colors.grey),
                         child: Text(
                           usuari.portaLentilles
                               ? 'Treure Lents'
                               : "Posar Lents",
-                          style: usuari.ultimo_cambio.day == DateTime.now().day
+                          style: usuari.ultimoCambio.day == DateTime.now().day
                               ? TextStyle(color: Colors.grey[600])
                               : const TextStyle(color: Colors.white),
                         ),
-                        style: ElevatedButton.styleFrom(primary: Colors.grey),
                       );
                   }
                 },
@@ -141,14 +141,14 @@ class _PrimeraState extends State<Primera> {
                   var usuari = snapshot.data!;
                   return ElevatedButton(
                       onPressed: () {
-                        if (usuari.ultimo_cambio.day != DateTime.now().day &&
+                        if (usuari.ultimoCambio.day != DateTime.now().day &&
                             !usuari.portaLentilles) {
                           usuari.userActionUpdate();
                         }
                       },
                       child: Text(
                         "No me les he ficat",
-                        style: usuari.ultimo_cambio.day == DateTime.now().day ||
+                        style: usuari.ultimoCambio.day == DateTime.now().day ||
                                 usuari.portaLentilles
                             ? TextStyle(color: Colors.grey[600])
                             : const TextStyle(color: Colors.white),
@@ -217,14 +217,14 @@ Widget _buildPopUpGeneral(BuildContext context, String name) {
 
 bool posar = false, durant = false, treure = false;
 
-class _buildPopUpFeedback extends StatefulWidget {
-  const _buildPopUpFeedback({Key? key}) : super(key: key);
+class _BuildPopUpFeedback extends StatefulWidget {
+  const _BuildPopUpFeedback({Key? key}) : super(key: key);
 
   @override
-  State<_buildPopUpFeedback> createState() => __buildPopUpFeedbackState();
+  State<_BuildPopUpFeedback> createState() => _BuildPopUpFeedbackState();
 }
 
-class __buildPopUpFeedbackState extends State<_buildPopUpFeedback> {
+class _BuildPopUpFeedbackState extends State<_BuildPopUpFeedback> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -275,9 +275,9 @@ class __buildPopUpFeedbackState extends State<_buildPopUpFeedback> {
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           children: const [
-                            Tutorial_Box(text: "Posar Lents"),
-                            Tutorial_Box(text: "Conservar Lents"),
-                            Tutorial_Box(text: "Treure Lents")
+                            TutorialBox(text: "Posar Lents"),
+                            TutorialBox(text: "Conservar Lents"),
+                            TutorialBox(text: "Treure Lents")
                           ]),
                       SizedBox(
                         height: 20,
@@ -351,9 +351,9 @@ class __buildPopUpFeedbackState extends State<_buildPopUpFeedback> {
   }
 }
 
-class Tutorial_Box extends StatelessWidget {
+class TutorialBox extends StatelessWidget {
   final String text;
-  const Tutorial_Box({Key? key, required this.text}) : super(key: key);
+  const TutorialBox({Key? key, required this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

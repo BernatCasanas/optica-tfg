@@ -158,8 +158,6 @@ class _AlertesState extends State<Alertes> {
                                       ),
                                     ),
                                     ElevatedButton(
-                                      child: const Text("Guardar",
-                                          style: TextStyle(fontSize: 10)),
                                       style: ElevatedButton.styleFrom(
                                         minimumSize: const Size(100, 40),
                                         shape: const StadiumBorder(),
@@ -172,6 +170,8 @@ class _AlertesState extends State<Alertes> {
                                             _date!, Avisos.personalitzat.index);
                                         await novaAlerta.save();
                                       },
+                                      child: const Text("Guardar",
+                                          style: TextStyle(fontSize: 10)),
                                     ),
                                   ],
                                 ),
@@ -193,13 +193,13 @@ class _AlertesState extends State<Alertes> {
                 },
               );
             },
-            child: const Text("Alerta Personalitzada"),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size(300, 40),
               shape: const StadiumBorder(),
               primary: Colors.grey[400],
               onPrimary: Colors.black,
             ),
+            child: const Text("Alerta Personalitzada"),
           ),
         ),
         const SizedBox(height: 15),

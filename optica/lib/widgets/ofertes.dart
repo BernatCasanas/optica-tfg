@@ -171,6 +171,7 @@ class _BoxOffer extends StatelessWidget {
           ),
           const Icon(Icons.photo),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 title,
@@ -183,7 +184,6 @@ class _BoxOffer extends StatelessWidget {
                 textAlign: TextAlign.center,
               )
             ],
-            crossAxisAlignment: CrossAxisAlignment.center,
           ),
         ],
       ),

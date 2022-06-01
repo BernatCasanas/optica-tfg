@@ -79,12 +79,12 @@ class _Configura0IniciState extends State<Configura0Inici> {
               children: [
                 ElevatedButton(
                   onPressed: buttonEnabled ? saveDataAndNextStep : null,
-                  child: const Text("Accedeix"),
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(200, 50),
                     shape: const StadiumBorder(),
                     primary: Colors.grey,
                   ),
+                  child: const Text("Accedeix"),
                 ),
                 if (error)
                   const Text(

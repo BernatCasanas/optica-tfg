@@ -73,9 +73,6 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                   ),
                   const SizedBox(height: 15),
                   TextButton(
-                    child: Text(_dateTime == null
-                        ? "Tria una data"
-                        : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(150, 40),
                         shape: const StadiumBorder(),
@@ -93,11 +90,12 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                         });
                       });
                     },
+                    child: Text(_dateTime == null
+                        ? "Tria una data"
+                        : DateFormat("yyyy-MM-dd").format(_dateTime!)),
                   ),
                   const SizedBox(height: 15),
                   TextButton(
-                    child:
-                        const Text("Guardar", style: TextStyle(fontSize: 10)),
                     style: ElevatedButton.styleFrom(
                         minimumSize: const Size(100, 40),
                         shape: const StadiumBorder(),
@@ -147,6 +145,8 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                               controller2_1.text = controller2_2.text =
                                   controller2_3.text = controller2_4.text = "";
                     },
+                    child:
+                        const Text("Guardar", style: TextStyle(fontSize: 10)),
                   ),
                   error == true
                       ? const Text("Falta omplir dades",
@@ -156,12 +156,11 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
               ),
             ),
             Expanded(
+                flex: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TextButton(
-                      child: const Text("Historial",
-                          style: TextStyle(fontSize: 20)),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -229,11 +228,10 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                               );
                             });
                       },
+                      child: const Text("Historial",
+                          style: TextStyle(fontSize: 20)),
                     ),
                     TextButton(
-                      child: const Text(
-                        "Continuar",
-                      ),
                       style: ElevatedButton.styleFrom(
                           minimumSize: const Size(100, 40),
                           shape: const StadiumBorder(),
@@ -248,10 +246,12 @@ class _Configura2GraduacioState extends State<Configura2Graduacio> {
                               )
                             : Navigator.of(context).pop();
                       },
+                      child: const Text(
+                        "Continuar",
+                      ),
                     ),
                   ],
-                ),
-                flex: 0),
+                )),
             const SizedBox(height: 10),
           ],
         ),
